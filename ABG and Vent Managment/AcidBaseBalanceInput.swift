@@ -18,7 +18,9 @@ struct AcidBaseBalanceInput: View {
             ScrollView{
                 VStack{
                     AcidBaseBalanceInstructionsView()
+                    
                     ABGView(ABGData: $patientData.ABGClass)
+                    
                     VentSettingsAndParametersView(VentData: $patientData.VentSettingsClass, VentParametersData: $patientData.VentParametersClass)
                     
                     Button("Interpret ABG") {
@@ -137,10 +139,13 @@ class PatientData: ObservableObject{
 }
 
 struct InputField: View {
+    //THis is the label that appears next to the text field
     var label: String
+    // THe unit of measurment will appear in the box for example if the text field is labeled Time then the unit can be named sec for seconds, or min for minutes.
     var units: String
-    
+    //The binding variable is whats going to bind the information in the text field.
     @Binding var value: Double
+    //
     @State private var text : String = ""
     
     var body: some View {
@@ -148,7 +153,7 @@ struct InputField: View {
             Text(label)
                 .frame(width: 75, alignment: .center)
             ZStack{
-                
+                //This is the textfield
                 TextField("", text: $text)
                                 .keyboardType(.decimalPad)
                                 .onChange(of: text) { oldValue, newValue in
@@ -162,6 +167,7 @@ struct InputField: View {
                                 }
                                 .textFieldStyle(.roundedBorder)
                                 .frame(width: 90)
+                //This is where the units will appear
                             Text(units)
                                 .font(.system(size: 10, weight: .thin))
                                 .frame(width: 70, alignment: .trailing)

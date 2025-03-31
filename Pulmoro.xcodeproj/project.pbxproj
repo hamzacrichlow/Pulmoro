@@ -29,9 +29,9 @@
 
 /* Begin PBXFileReference section */
 		137B4A902D7DFE0400491587 /* PulmoroHomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulmoroHomePage.swift; sourceTree = "<group>"; };
-		137B4AFD2D7E09B300491587 /* PulmoroApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PulmoroApp.app; path = "/Users/hamzacrichlow/Documents/Pulmoro/PulmoroApp/build/Debug-iphoneos/PulmoroApp.app"; sourceTree = "<absolute>"; };
-		137B4AFE2D7E09B300491587 /* PulmoroAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PulmoroAppTests.xctest; path = "/Users/hamzacrichlow/Documents/Pulmoro/PulmoroApp/build/Debug-iphoneos/PulmoroApp.app/PlugIns/PulmoroAppTests.xctest"; sourceTree = "<absolute>"; };
-		137B4AFF2D7E09B300491587 /* PulmoroAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = PulmoroAppUITests.xctest; path = "/Users/hamzacrichlow/Documents/Pulmoro/PulmoroApp/build/Debug-iphoneos/PulmoroAppUITests-Runner.app/PlugIns/PulmoroAppUITests.xctest"; sourceTree = "<absolute>"; };
+		13EA23272D9ACB59002DAED4 /* PulmoroApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PulmoroApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13EA23282D9ACB59002DAED4 /* PulmoroAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PulmoroAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		13EA23292D9ACB59002DAED4 /* PulmoroAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PulmoroAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -96,6 +96,9 @@
 				13C596632D7CBA260077846B /* PulmoroAppUITests */,
 				137B4ABC2D7E091A00491587 /* ABG and Vent Managment */,
 				137B4ADC2D7E093200491587 /* Calculations */,
+				13EA23272D9ACB59002DAED4 /* PulmoroApp.app */,
+				13EA23282D9ACB59002DAED4 /* PulmoroAppTests.xctest */,
+				13EA23292D9ACB59002DAED4 /* PulmoroAppUITests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -124,7 +127,7 @@
 			packageProductDependencies = (
 			);
 			productName = PulmoroApp;
-			productReference = 137B4AFD2D7E09B300491587 /* PulmoroApp.app */;
+			productReference = 13EA23272D9ACB59002DAED4 /* PulmoroApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		13C596552D7CBA260077846B /* PulmoroAppTests */ = {
@@ -144,7 +147,7 @@
 			packageProductDependencies = (
 			);
 			productName = PulmoroAppTests;
-			productReference = 137B4AFE2D7E09B300491587 /* PulmoroAppTests.xctest */;
+			productReference = 13EA23282D9ACB59002DAED4 /* PulmoroAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		13C5965F2D7CBA260077846B /* PulmoroAppUITests */ = {
@@ -167,7 +170,7 @@
 			packageProductDependencies = (
 			);
 			productName = PulmoroAppUITests;
-			productReference = 137B4AFF2D7E09B300491587 /* PulmoroAppUITests.xctest */;
+			productReference = 13EA23292D9ACB59002DAED4 /* PulmoroAppUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -403,6 +406,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CCDZ7KL3PH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -430,6 +434,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CCDZ7KL3PH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

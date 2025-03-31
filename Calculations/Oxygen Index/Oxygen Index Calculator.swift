@@ -50,7 +50,7 @@ struct OxygenIndexCalculator: View {
                         }
                     }
                 }
-                .frame(width: 380)
+                .customGroupBoxStyle()
                 
                 
                 ImportantInfoBox(ImportantInformation: """

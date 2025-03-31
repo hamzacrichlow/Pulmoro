@@ -115,6 +115,7 @@ struct DesiredCO2Calculator: View {
                         }
                     }
                 }
+                .customGroupBoxStyle()
                
                 ImportantInfoBox(ImportantInformation: """
                                  Normal PaCO₂ typically ranges from 35 mmHg to 45 mmHg in most patients.

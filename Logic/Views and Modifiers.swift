@@ -24,7 +24,8 @@ struct TabBar: View {
     
     var body: some View {
         
-        TabView(selection: $selectedTab){
+        TabView(selection: $selectedTab)
+        {
             Calculations()
                 .tabItem{
                     Image(systemName: "plus.forwardslash.minus")

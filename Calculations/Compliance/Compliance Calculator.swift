@@ -102,7 +102,7 @@ struct ComplianceCalculator: View {
 
                     }
                 }
-                .frame(width: 380)
+                .customGroupBoxStyle()
                 
                 ImportantInfoBox(ImportantInformation: """
 Compliance refers to the lung's ability to expand and contract with each breath.

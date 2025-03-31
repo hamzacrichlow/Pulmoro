@@ -71,7 +71,8 @@ struct OxygenTankDurationCalculator: View {
                         }
                     }
                 }
-                .frame(width: 380)
+                .customGroupBoxStyle()
+                
                 ImportantInfoBox(ImportantInformation: """
 Keep cylinders upright and secured to prevent tipping. Use appropriate stands or brackets to stabilize the tanks.
 

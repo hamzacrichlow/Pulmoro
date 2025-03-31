@@ -53,6 +53,7 @@ struct TidalVolumeCalculation: View {
                         }
                     }
                 }
+                .customGroupBoxStyle()
                
                 
                 ImportantInfoBox(ImportantInformation: ("""

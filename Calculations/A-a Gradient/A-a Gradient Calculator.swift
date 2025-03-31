@@ -26,11 +26,11 @@ struct AaGradientCalculator: View {
         ScrollView{
             
             VStack{
-                //A-a Gradient Calculator Group Box
-                CalculatorInstructions(instructions: "Enter the patient's age, FiO₂, PaO₂, and PaCO₂ to calculate the patient's A-a gradient.")
+                
                 
                 GroupBox(label: Label("A-a Gradient Calculator", systemImage: "lungs.fill")){
                     VStack{
+                        CalculatorInstructions(instructions: "Enter the patient's age, FiO₂, PaO₂, and PaCO₂ to calculate the patient's A-a gradient.")
                         HStack{
                             VStack{
                                 InputField(label: "Age", units: "", value: $age)

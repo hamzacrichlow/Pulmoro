@@ -104,8 +104,8 @@ struct OxygenContentCalculator: View {
                         }
                     }
                 }
+                .customGroupBoxStyle()
                 
-                .frame(width: 380)
                 ImportantInfoBox(ImportantInformation: """
                                  Total oxygen content determines whether the blood has sufficient oxygen-carrying capacity to adequately oxygenate tissues.
 
