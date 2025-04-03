@@ -34,7 +34,7 @@ func calculateIBW(height: Double, gender: String)->Double{
 /// Function used to calculate tidal volume (VT).
 /// - Parameters:
 ///   - IBW: Ideal body weight
-///   - mlPerKg: How many mlL/Kg the clinician wants to give the patient
+///   - mLPerKg: How many mlL/Kg the clinician wants to give the patient
 /// - Returns: Returns the appropriate VT for the patient based on their ideal body weight.
 func calculateVT(IBW: Double, mLPerKg: Double)->Double{
     return IBW * mLPerKg
@@ -144,7 +144,7 @@ func calculateCdyn(VT: Double, PIP: Double, PEEP: Double)-> Double {
 /// - Parameters:
 ///   - PIP: Peak inspiratory pressure (PIP) ventilator parameter
 ///   - PEEP: Positive end-expiratory pressure (PEEP) ventilator setting
-/// - Returns: Returns the driving pressure``Double``
+/// - Returns: Returns the driving pressure`Double`
 func calculateDrivingPressure(PIP: Double, PEEP: Double)->Double {
     return PIP-PEEP
 }
@@ -170,8 +170,8 @@ func calculateOI(MAP: Double, FiO₂: Double, PaO₂: Double) -> Double {
 ///   - PaCO₂: Patients PaCO₂ from their ABG
 ///   - DesiredPaCO₂: Desired PaCO₂ that the clinician wants
 /// - Returns: Returns  the new RR to set the vent too so the patient can get the desired PaCO₂
-func calculateNewRR(RR:Double, PaCO₂:Double, DesiredPaC₂:Double)->Double{
-   return  (RR*PaCO₂)/DesiredPaC₂
+func calculateNewRR(RR:Double, PaCO₂:Double, DesiredPaCO₂:Double)->Double{
+   return  (RR*PaCO₂)/DesiredPaCO₂
 }
 
 /// Function used to calculate the Tidal Volume (VT)  needed to acquire the desired PaCO₂ that the clinician wants for the patient.

@@ -53,6 +53,7 @@ struct AcidBaseBalanceInput: View {
 
 
 
+/// Arterial Blood Gas (ABG) lab values.
 struct ABG {
     var FiO2: Double?
     var pH: Double?
@@ -62,6 +63,7 @@ struct ABG {
     var saO2: Double?
     var BE: Double?
     
+    /// Normal Ranges for ABG lab values.
     struct NormalRanges {
         let pH: ClosedRange<Double>
         let paCO2: ClosedRange<Double>
@@ -74,6 +76,7 @@ struct ABG {
     
  
     
+ 
     let normalRanges: NormalRanges = NormalRanges(
         pH: 7.35...7.45,
         paCO2: 35.0...45.0,

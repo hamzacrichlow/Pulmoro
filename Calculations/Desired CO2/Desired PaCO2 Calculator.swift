@@ -73,7 +73,7 @@ struct DesiredCO2Calculator: View {
                         Button(action: {
                             
                             if VentSetting == "RR" {
-                                newRR = calculateNewRR(RR: RR, PaCO₂: PaCO₂, DesiredPaC₂: DesiredPaCO₂)
+                                newRR = calculateNewRR(RR: RR, PaCO₂: PaCO₂, DesiredPaCO₂: DesiredPaCO₂)
                             } else if VentSetting == "VT" {
                                 newVT = calculateNewVT(VT: VT, PaCO₂: PaCO₂, DesiredPaCO₂: DesiredPaCO₂)
                             } else if VentSetting == "VE" {

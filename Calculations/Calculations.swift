@@ -42,66 +42,76 @@ struct Calculations: View {
     ]
     
     var body: some View {
-        
+    
         NavigationStack{
             
-            List{
-                Section("Respiratory") {
-                    ForEach(calculationsList, id: \.name) { calculation in
-                        NavigationLink(value: calculation) {
-                            Text(calculation.name)
+            ZStack{
+              
+                VStack{
+                    Text("Every calculator includes a comprehensive guide with detailed explanations, step-by-step instructions for real-world application, and practical case studies demonstrating clinical usage in the 'More Information' section.")
+                        .font(.caption)
+                        .padding()
+                    List{
+                        Section("Respiratory") {
+                            ForEach(calculationsList, id: \.name) { calculation in
+                                NavigationLink(value: calculation) {
+                                    Text(calculation.name)
+                                }
+                            }
+                        }
+                        Section("Extracorporeal Membrane Oxygenation") {
+                            ForEach(ecmoCalculationsList, id: \.name) { calculation in
+                                NavigationLink(value: calculation) {
+                                    Text(calculation.name)
+                                }
+                            }
+                            
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                 
+                    .navigationTitle("Calculators")
+                    .navigationDestination(for: RespiratoryCalculations.self) { calculation in
+                        switch calculation.name {
+                        case "A-a Gradient":
+                            AaGradientCalculator.init()
+                        case "Compliance":
+                            ComplianceCalculator.init()
+                        case "Desired PaCO₂":
+                            DesiredCO2Calculator.init()
+                        case "Oxygen Content":
+                            OxygenContentCalculator.init()
+                        case "Oxygen Index":
+                            OxygenIndexCalculator.init()
+                        case "Oxygen Tank Duration":
+                            OxygenTankDurationCalculator.init()
+                        case "Tidal Volume":
+                            TidalVolumeCalculation.init()
+                        default:
+                            Text("Coming Soon!")
+                        }
+                    }
+                    .navigationDestination(for: EcmoCalculations.self) { calculation in
+                        switch calculation.name {
+                        case "A-a Gradient":
+                            AaGradientCalculator.init()
+                        default:
+                            Text("Coming Soon!")
+                        }
+                    }
+                    
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            InfoButtonView()
                         }
                     }
                 }
-                Section("Extracorporeal Membrane Oxygenation") {
-                    ForEach(ecmoCalculationsList, id: \.name) { calculation in
-                        NavigationLink(value: calculation) {
-                            Text(calculation.name)
-                        }
-                    }
-
-                }
             }
-            .navigationTitle("Calculators")
-            .navigationDestination(for: RespiratoryCalculations.self) { calculation in
-                switch calculation.name {
-                case "A-a Gradient":
-                    AaGradientCalculator.init()
-                case "Compliance":
-                    ComplianceCalculator.init()
-                case "Desired PaCO₂":
-                    DesiredCO2Calculator.init()
-                case "Oxygen Content":
-                    OxygenContentCalculator.init()
-                case "Oxygen Index":
-                    OxygenIndexCalculator.init()
-                case "Oxygen Tank Duration":
-                    OxygenTankDurationCalculator.init()
-                case "Tidal Volume":
-                    TidalVolumeCalculation.init()
-                default:
-                    Text("Coming Soon!")
-                }
-            }
-            .navigationDestination(for: EcmoCalculations.self) { calculation in
-                switch calculation.name {
-                case "A-a Gradient":
-                    AaGradientCalculator.init()
-                default:
-                    Text("Coming Soon!")
-                }
-            }
-            
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    InfoButtonView()
-                }
-            }
-            
         }
+    }
         
     }
-}
+
 
 
 #Preview {

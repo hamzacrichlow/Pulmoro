@@ -14,6 +14,7 @@ struct OxygenIndexCalculator: View {
     @State private var PaO₂: Double = 0
     
     @State private var OI: Double? = nil
+    @State private var PFRatio: Double? = nil
     
     var isFormValid: Bool {
          FiO₂ > 0.00 && MAP > 0.00 && PaO₂ > 0.00
@@ -35,16 +36,21 @@ struct OxygenIndexCalculator: View {
                         
                         Button(action: {
                             OI = calculateOI(MAP: MAP, FiO₂: FiO₂, PaO₂: PaO₂)
+                            PFRatio = calculatePFRatio(PaO2: PaO₂, FiO2: FiO₂)
                         },
                                label: {
                             Text("Calculate")
                         })
                         .buttonStyle(CustomButtonStyle())
                         .disabled(!isFormValid)
-                        if let OI = OI {
+                        if let OI = OI, let PFRatio = PFRatio {
                             
                             Text("OI : \(Int(OI))")
                                 .font(.system(size: 30, weight: .bold))
+                                .transition(.scale)
+                                .animation(.easeInOut(duration: 0.5), value: OI)
+                            Text("PF Ratio : \(Int(PFRatio))")
+                                .font(.caption)
                                 .transition(.scale)
                                 .animation(.easeInOut(duration: 0.5), value: OI)
                         }
