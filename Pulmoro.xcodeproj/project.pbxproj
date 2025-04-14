@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		137B4AAF2D7DFE0400491587 /* PulmoroHomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137B4A902D7DFE0400491587 /* PulmoroHomePage.swift */; };
+		13AF30542DA1E59D00669558 /* VentSim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13AF30532DA1E59D00669558 /* VentSim.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 
 /* Begin PBXFileReference section */
 		137B4A902D7DFE0400491587 /* PulmoroHomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulmoroHomePage.swift; sourceTree = "<group>"; };
+		13AF30532DA1E59D00669558 /* VentSim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VentSim.swift; sourceTree = "<group>"; };
 		13EA23272D9ACB59002DAED4 /* PulmoroApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PulmoroApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13EA23282D9ACB59002DAED4 /* PulmoroAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PulmoroAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		13EA23292D9ACB59002DAED4 /* PulmoroAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PulmoroAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				137B4A902D7DFE0400491587 /* PulmoroHomePage.swift */,
+				13AF30532DA1E59D00669558 /* VentSim.swift */,
 				137B4AFA2D7E093900491587 /* Logic */,
 				137B4AF52D7E093500491587 /* Information */,
 				13C596632D7CBA260077846B /* PulmoroAppUITests */,
@@ -246,6 +249,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13AF30542DA1E59D00669558 /* VentSim.swift in Sources */,
 				137B4AAF2D7DFE0400491587 /* PulmoroHomePage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

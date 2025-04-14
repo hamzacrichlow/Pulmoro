@@ -10,9 +10,11 @@ import SwiftUI
 
 struct Views: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Diagnostic(valueName: "Time", value: 30, unit: "sec", isNormal: true)
+      
     }
 }
+
 #Preview {
     Views()
 }
@@ -26,25 +28,33 @@ struct TabBar: View {
         
         TabView(selection: $selectedTab)
         {
-            Calculations()
-                .tabItem{
-                    Image(systemName: "plus.forwardslash.minus")
-                    Text("Calculations")
-                        .padding()
+            VentSim()
+                .tabItem {
+                    Image(systemName: "lungs.fill")
+                    Text("Simulator")
                 }
-                
+         
             AcidBaseBalanceInput()
                 .tabItem{
                     Image(systemName: "syringe")
                     Text("Acid Base Balance")
                 }
                 .tag(0)
+            Calculations()
+                .tabItem{
+                    Image(systemName: "lightswitch.on.fill")
+                    Text("Calculators")
+                        .padding()
+                }
+                
             MorePage()
                 .tabItem{
-                    Image(systemName: "circle.hexagonpath.fill")
+//                    Image(systemName: "circle.hexagonpath.fill")
+                    Image(systemName: "ellipsis")
                     Text("More")
                         .padding()
                 }
+         
         }
         .shadow(radius: 20)
     }
@@ -257,6 +267,45 @@ struct genderPicker: View {
         }
     }
 }
+struct patientInformationGenderPicker: View {
+    
+    @Binding var gender: String?
+    
+    let genders = ["M", "F"]
+    
+    var body: some View {
+        HStack {
+            Text("Gender")
+                .frame(width: 75, alignment: .center) // Match InputField label width
+            
+            ZStack {
+                // Create a container to match the TextField's appearance
+//                RoundedRectangle(cornerRadius: 6)
+//                    .fill(Color(UIColor.systemBackground))
+//                    .frame(width: 80, height: 35) // Match TextField size
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 6)
+//                            .stroke(Color(UIColor.systemGray4), lineWidth: 0.5)
+//                    )
+                
+                // Picker inside the ZStack
+                Picker("", selection: Binding(
+                    get: { gender ?? "M" },
+                    set: { gender = $0 }
+                )) {
+                    ForEach(genders, id: \.self) { option in
+                        Text(option)
+                            .font(.system(size: 13)) // Smaller font to fit
+                            .tag(option)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .frame(width: 80) // Slightly smaller to fit in the container
+                .scaleEffect(0.9) // Scale down slightly if needed
+            }
+        }
+    }
+}
 
 /// This struct is a wheel picker so that the user can input the patients height in inches and it uses a function to convert that height into inches
 struct heightPicker: View {
@@ -312,6 +361,62 @@ struct heightPicker: View {
     
     func convertFeetToInches (){
       height = selectedFeet * 12 + selectedInches
+    }
+}
+
+struct patientInformationHeightPicker: View {
+    
+    @Binding var height: Double?
+    @State private var selectedFeet = 0
+    @State private var selectedInches = 0
+   
+    
+    var body: some View {
+        
+        HStack{
+            
+            Text("Height")
+                .frame(width: 75, alignment: .center)
+            
+            ZStack{
+                
+                Picker("Feet", selection: $selectedFeet) {
+                    ForEach(0..<9) {feet in
+                        Text("\(feet)").tag(feet)
+                            .font(.system(size: 13, weight: .bold))
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                .frame(width: 100, height: 40)
+                .onChange(of: selectedFeet) { oldValue, NewValue in
+                    convertFeetToInches()
+                }
+            }
+            Text("ft")
+                .font(.system(size: 10))
+            
+            ZStack{
+                
+                Picker("Inches", selection: $selectedInches) {
+                    ForEach(0..<12) {inches in
+                        Text("\(inches)").tag(inches)
+                            .font(.system(size: 13, weight: .bold))
+                    }
+                }
+                .frame(width: 100, height: 40)
+                .pickerStyle(WheelPickerStyle())
+                .onChange(of: selectedInches) { oldValue, newValue in
+                    convertFeetToInches()
+                }
+            }
+            Text("in")
+                .font(.system(size: 10))
+            
+        }
+    }
+    
+    func convertFeetToInches (){
+      height = Double(selectedFeet * 12 + selectedInches)
     }
 }
 

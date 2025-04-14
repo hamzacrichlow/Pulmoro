@@ -48,7 +48,7 @@ struct Calculations: View {
             ZStack{
               
                 VStack{
-                    Text("Every calculator includes a comprehensive guide with detailed explanations, step-by-step instructions for real-world application, and practical case studies demonstrating clinical usage in the 'More Information' section.")
+                    Text("Each calculator includes a comprehensive guide with detailed explanations, step-by-step instructions for real-world application, and practical case studies demonstrating clinical usage in the 'More Information' section.")
                         .font(.caption)
                         .padding()
                     List{
@@ -102,7 +102,7 @@ struct Calculations: View {
                     
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            InfoButtonView()
+                           InfoButtonView()
                         }
                     }
                 }

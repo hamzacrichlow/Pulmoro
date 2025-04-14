@@ -164,17 +164,11 @@ struct ABGInterpretationSheet: View {
     }
 }
 
-#Preview {
-//    BalancepH(ABGData: ABGClass,
-//              VentData: $patientData.VentSettingsClass,
-//              VentParameters: $patientData.VentParametersClass)
-    let patientData = PatientData()
-        return BalancepH(
-            ABGData: .constant(patientData.ABGClass),
-            VentData: .constant(patientData.VentSettingsClass),
-            VentParameters: .constant(patientData.VentParametersClass)
-            )
+func reccomendVentSettings(VT: Double?, PC: Double?, PS: Double?, RR: Double?, FiO2: Double?, PEEP: Double?, IT: Double?, flow: Double?, VTe: Double?, fTOT: Double?, PIP: Double?, MAP: Double?, pPlat: Double?, autoPEEP: Double?, ptLeak: Double? )  {
+    
+
 }
+
 ///ABG Interpretator
 func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO2: Double?) -> (String, String, String, String, String) {
     
@@ -418,13 +412,13 @@ struct VentSettingInterpretationSheet: View {
                 .padding(.top, 5)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            GroupBox(label: Label("\(VentData.ventilationMode)", systemImage: "inset.filled.tv")){
+            GroupBox(label: Label("\(VentData.ventilationType) Ventilation", systemImage: "inset.filled.tv")){
                 VStack{
                     Divider()
                         .frame(height: 3)
                         .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
                         .padding(.bottom, 5)
-                    Text("\(VentData.ventilationType) Ventilator Settings:")
+                    Text("\(VentData.ventilationMode) Settings:")
                         .font(.headline)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -450,7 +444,7 @@ struct VentSettingInterpretationSheet: View {
                     .padding(.bottom, 5)
                 
                 VStack{
-                    Text("\(VentData.ventilationType) Ventilator Parameters:")
+                    Text("Patient Parameters:")
                         .font(.headline)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -487,7 +481,17 @@ struct BalancepH: View {
         }
     }
 }
-
+#Preview {
+//    BalancepH(ABGData: ABGClass,
+//              VentData: $patientData.VentSettingsClass,
+//              VentParameters: $patientData.VentParametersClass)
+    let patientData = PatientData()
+        return BalancepH(
+            ABGData: .constant(patientData.ABGClass),
+            VentData: .constant(patientData.VentSettingsClass),
+            VentParameters: .constant(patientData.VentParametersClass)
+            )
+}
 /*
  Commit Messages
  New Feature:

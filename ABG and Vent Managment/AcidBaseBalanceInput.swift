@@ -18,6 +18,9 @@ struct AcidBaseBalanceInput: View {
             ScrollView{
                 VStack{
                     AcidBaseBalanceInstructionsView()
+                    PatientInformationView(PatientInformationData: $patientData.PatientInformatioinClass)
+                    VitalsView(VitalsData: $patientData.VitalsClass)
+                  
                     
                     ABGView(ABGData: $patientData.ABGClass)
                     
@@ -51,7 +54,11 @@ struct AcidBaseBalanceInput: View {
 }
 
 
-
+struct PatientInformation {
+    var age: Double?
+    var height: Double?
+    var gender: String?
+}
 
 /// Arterial Blood Gas (ABG) lab values.
 struct ABG {
@@ -73,10 +80,6 @@ struct ABG {
         let BE: ClosedRange<Double>
    
     }
-    
- 
-    
- 
     let normalRanges: NormalRanges = NormalRanges(
         pH: 7.35...7.45,
         paCO2: 35.0...45.0,
@@ -85,7 +88,33 @@ struct ABG {
         saO2: 97.0...100.0,
         BE: -2.0...2.0
     )
+}
+
+struct Vitals {
+    var HR: Double?
+    var systolicBP: Double?
+    var diastolicBP: Double?
+    var SpO2: Double?
+    var f: Double?
+    var temp: Double?
     
+    struct NormalRanges {
+        let HR: ClosedRange<Double>
+        let systolicBP: ClosedRange<Double>
+        let diastolicBP: ClosedRange<Double>
+        let SpO2: ClosedRange<Double>
+        let f: ClosedRange<Double>
+        let temp: ClosedRange<Double>
+    }
+    
+    let normalRanges: NormalRanges = NormalRanges(
+        HR: 60...100,
+        systolicBP: 60...100,
+        diastolicBP: 60...100,
+        SpO2: 92...100,
+        f: 12...20,
+        temp: 36...39
+        )
 }
 
 struct VentSettings {
@@ -132,13 +161,16 @@ struct VentParameters {
 }
 
 class PatientData: ObservableObject{
+    @Published var PatientInformatioinClass = PatientInformation()
+    @Published var VitalsClass = Vitals()
     @Published var ABGClass = ABG()
-    
     @Published var VentSettingsClass = VentSettings(
         ventilationType: "",
         ventilationMode: "")
-    
     @Published var VentParametersClass = VentParameters()
+   
+    
+   
 }
 
 struct InputField: View {
@@ -169,7 +201,7 @@ struct InputField: View {
                                     }
                                 }
                                 .textFieldStyle(.roundedBorder)
-                                .frame(width: 90)
+                                .frame(width: 80)
                 //This is where the units will appear
                             Text(units)
                                 .font(.system(size: 10, weight: .thin))
@@ -258,6 +290,112 @@ struct ABGView: View {
      
             }
         }
+
+struct VitalsView: View {
+    
+    @Binding var VitalsData: Vitals
+    
+    var body: some View {
+        GroupBox(label: Label("Vital Signs", systemImage: "waveform.path.ecg")){
+            Divider()
+                .frame(height: 2)
+                .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .padding(.bottom, 5)
+            HStack{
+                ZStack{
+                    
+                VStack{
+                    InputField(label: "HR", units: "b/min", value: Binding(
+                        get: {VitalsData.HR ?? 0.0},
+                        set: {VitalsData.HR = $0}
+                    ))
+                    ZStack{
+                     
+                       
+                            Divider()
+                                .frame(width: 70)
+                                .frame(height:0.1)
+                                .padding(.leading, 80)
+                                .overlay(.primary)
+                        
+                    
+                        VStack{
+                            InputField(label: "Systolic", units: "mmHg", value: Binding(
+                                get: {VitalsData.systolicBP ?? 0.0},
+                                set: {VitalsData.systolicBP = $0}
+                            ))
+                            
+                            InputField(label: "Diastolic", units: "mmHg", value: Binding(
+                                get: {VitalsData.diastolicBP ?? 0.0},
+                                set: {VitalsData.diastolicBP = $0}
+                            ))
+                        }
+                    }
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 5)
+//                            .stroke(Color.gray.opacity(0.03), lineWidth: 1)
+//                            .frame(width: 175, height: 90)
+//                    )
+                    
+                }
+            }
+                VStack{
+                    InputField(label: "SpO2", units: "%", value: Binding(
+                        get: {VitalsData.SpO2 ?? 0.0},
+                        set: {VitalsData.SpO2 = $0}
+                    ))
+                    InputField(label: "RR", units: "b/min", value: Binding(
+                        get: {VitalsData.f ?? 0.0},
+                        set: {VitalsData.f = $0}
+                    ))
+                    InputField(label: "Temp", units: "C °", value: Binding(
+                        get: {VitalsData.temp ?? 0.0},
+                        set: {VitalsData.temp = $0}
+                    ))
+                }
+            }
+        }
+        .customGroupBoxStyle()
+    }
+}
+
+struct PatientInformationView: View{
+    
+    @Binding var PatientInformationData: PatientInformation
+    
+     var body: some View {
+         GroupBox(label: Label("Patient Information", systemImage: "person.fill")){
+             Divider()
+                 .frame(height: 2)
+                 .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                 .padding(.bottom, 5)
+          
+                 VStack{
+                     HStack{
+                         InputField(label: "Age", units: "", value: Binding(
+                            get: {PatientInformationData.age ?? 0.0},
+                            set: {PatientInformationData.age = $0}
+                         ))
+                         Spacer()
+                         patientInformationGenderPicker(gender: $PatientInformationData.gender)
+                     }
+                     HStack{
+                         InputField(label: "Height", units: "inches", value: Binding(
+                            get: {PatientInformationData.age ?? 0.0},
+                            set: {PatientInformationData.age = $0}
+                         ))
+                         InputField(label: "Weight", units: "lbs", value: Binding(
+                            get: {PatientInformationData.age ?? 0.0},
+                            set: {PatientInformationData.age = $0}
+                         ))
+                     }
+                 }
+             
+         }
+         .customGroupBoxStyle()
+         
+    }
+}
 
 struct VentParametersView: View {
     @Binding var VentParametersData: VentParameters
