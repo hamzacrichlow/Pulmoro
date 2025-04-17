@@ -9,15 +9,240 @@ import SwiftUI
 
 
 struct Views: View {
+    
+    @Binding var ABGData: ABG
+    @Binding var VentData: VentSettings
+    @Binding var VentParameters: VentParameters
+    
     var body: some View {
-        Diagnostic(valueName: "Time", value: 30, unit: "sec", isNormal: true)
-      
+        
+        let interpretation = interpretABG(
+            pH: ABGData.pH,
+            paCO2: ABGData.paCO2,
+            HCO3: ABGData.HCO3,
+            PaO2: ABGData.paO2,
+            FiO2: VentData.FiO₂
+        )
+        let condition = interpretation.4
+        let oxygenationStatus = interpretation.2
+        
+        NavigationStack{
+            ScrollView{
+                Text("""
+            Summary
+            """)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(.leading)
+                        .padding(.bottom)
+                Text("""
+                    The patient is in an uncompensated metabolic acidosis with severe hypoxemia. FiO2 should be increased to correct oxygenation status. Vent settings can be adjusted temporarily to fix acid-base balance however metabolic intervention should take place. Consider using the anion-gap calculation to determine if bicorbante should be administered.
+                    """)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading)
+                .padding(.bottom)
+                
+                Text("Reccomended Vent Settings:")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(size: 16, weight: .bold))
+                    .padding(.leading)
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack {
+                            VentCardInfo(VentData: $VentData)
+                        }
+                     
+                    }
+                }
+                .customGroupBoxStyle()
+                
+                Divider()
+                .frame(width: 350)
+                .frame(height: 1)
+                .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .padding()
+                
+            Text("""
+        Patient Assessment
+        """)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(size: 16, weight: .bold))
+                    .padding(.leading)
+                    .padding(.bottom, -5)
+          
+            ClickableGroupBox(title: "Blood Gas Interpretation",
+                              icon: "syringe.fill",
+                              info: "\(interpretation.1) with \(oxygenationStatus)",
+                              destination: Text("Blood Gas Interpretation"),
+                              content: ABGCardInfo(ABGData: $ABGData))
+            
+            ClickableGroupBox(title: "Ventilator Assessment",
+                              icon: "lungs.fill",
+                              info: "\(VentData.ventilationType) Ventilation | \(VentData.ventilationMode) ",
+                              destination: Text("Ventilator Assessment"),
+                              content: VentCardInfo(VentData: $VentData))
+            
+            ClickableGroupBox(title: "Clinical Reference",
+                              icon: "book.closed.fill",
+                              destination: Text("Clinical Reference"),
+                              description: "Evidence-based explanations of physiological principles and clinical guidelines for respiratory management.")
+            ClickableGroupBox(title: "Risk  Factors",
+                              icon: "exclamationmark.triangle.fill",
+                              destination: Text("Risk  Factors"),
+                              description: "Patient-specific warnings, potential complications, and contraindications based on current clinical status.")
+        }
+            .applyCalculationToolBar(title: "Care Plan", destination: InfoButtonView())
+    }
+}
+}
+
+struct ClickableGroupBox<Destination: View, Content: View>: View {
+    var title: String
+    var icon: String
+    var info: String?  // Make this optional
+    var destination: Destination
+    var description: String?
+    var content: Content?
+    
+    // Standard initializer with content
+    init(title: String,
+         icon: String,
+         info: String,
+         destination: Destination,
+         content: Content) {
+        self.title = title
+        self.icon = icon
+        self.info = info
+        self.destination = destination
+        self.description = nil
+        self.content = content
+    }
+    
+    // Initializer with description only
+    init(title: String,
+         icon: String,
+         destination: Destination,
+         description: String) where Content == EmptyView {
+        self.title = title
+        self.icon = icon
+        self.info = nil  // Set to nil since it's not provided
+        self.destination = destination
+        self.description = description
+        self.content = nil
+    }
+    
+    var body: some View {
+        NavigationLink(destination: destination) {
+            GroupBox {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Label(title, systemImage: icon)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.blue)
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    // Use the description parameter if provided, else use info if provided
+                    if let description = description {
+                        Text(description)
+                            .font(.system(size: 13, weight: .medium))
+                    } else if let info = info {
+                        Text(info)
+                            .font(.system(size: 13, weight: .medium))
+                        
+                        Divider()
+                            .frame(height: 1)
+                    }
+                    
+                    // Show content if provided
+                    if let content = content {
+                        content
+                    }
+                }
+            }
+            .customGroupBoxStyle()
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
-#Preview {
-    Views()
+struct ABGCardInfo: View {
+    
+    @Binding var ABGData: ABG
+    
+    var body: some View {
+        HStack{
+            Spacer()
+            Diagnostic(valueName: "pH", value: ABGData.pH, unit: "", isNormal: isNormal(value: ABGData.pH, range: ABGData.normalRanges.pH))
+            Spacer()
+            Diagnostic(valueName: "PaCO₂", value: ABGData.paCO2, unit: "mmHg", isNormal: isNormal(value: ABGData.paCO2, range: ABGData.normalRanges.paCO2))
+            Spacer()
+            Diagnostic(valueName: "HCO₃", value: ABGData.HCO3, unit: "mEq/L", isNormal: isNormal(value: ABGData.HCO3, range: ABGData.normalRanges.HCO3))
+            Spacer()
+            Diagnostic(valueName: "B.E", value: ABGData.BE, unit: "mEq/L", isNormal: isNormal(value: ABGData.BE, range: ABGData.normalRanges.BE))
+            Spacer()
+            Diagnostic(valueName: "PaO₂", value: ABGData.paO2, unit: "mmHg", isNormal: isNormal(value: ABGData.paO2, range: ABGData.normalRanges.paO2))
+            Spacer()
+            Diagnostic(valueName: "SaO₂", value: ABGData.saO2, unit: "%",isNormal: isNormal(value: ABGData.saO2, range: ABGData.normalRanges.saO2))
+            Spacer()
+        }
+    }
 }
+struct VentCardInfo: View {
+    
+    @Binding var VentData: VentSettings
+    
+    var body: some View {
+        HStack{
+            Spacer()
+            VentSettingsInput(valueName: "VT", value: VentData.VT, unit: "mL")
+            Spacer()
+            VentSettingsInput(valueName: "RR", value: VentData.RR, unit: "b/min")
+            Spacer()
+            VentSettingsInput(valueName: "FiO₂", value: VentData.FiO₂, unit: "%")
+            Spacer()
+            VentSettingsInput(valueName: "PEEP", value: VentData.PEEP, unit: "cmH₂O")
+            Spacer()
+            VentSettingsInput(valueName: "IT", value: VentData.IT, unit: "sec")
+            Spacer()
+            VentSettingsInput(valueName: "I:E", value: VentData.IE, unit: "ratio")
+            Spacer()
+        }
+    }
+}
+
+//#Preview {
+//    // Create a preview data instance
+//    let previewData = PatientData()
+//    
+//    // Set up ABG preview data with reasonable values
+//    previewData.ABGClass.pH = 7.30
+//    previewData.ABGClass.paCO2 = 40
+//    previewData.ABGClass.HCO3 = 18
+//    previewData.ABGClass.paO2 = 40
+//    previewData.ABGClass.saO2 = 95
+//    previewData.ABGClass.BE = 0
+//    
+//    // Set up VentSettings preview data
+//    previewData.VentSettingsClass.VT = 500
+//    previewData.VentSettingsClass.RR = 12
+//    previewData.VentSettingsClass.FiO₂ = 40
+//    previewData.VentSettingsClass.PEEP = 5
+//    previewData.VentSettingsClass.IT = 1.0
+//    previewData.VentSettingsClass.IE = 1.2
+//    previewData.VentSettingsClass.ventilationMode = "VC/AC"
+//    previewData.VentSettingsClass.ventilationType = "Invasive"
+//    
+//    // Return the Views with constant bindings for preview
+//    return Views(
+//        ABGData: .constant(previewData.ABGClass),
+//        VentData: .constant(previewData.VentSettingsClass)
+//    )
+//}
 
 
 struct TabBar: View {
@@ -680,19 +905,19 @@ struct InfoButtonView: View {
 
 
 struct CustomGroupBoxStyle: ViewModifier {
+    
     func body(content: Content) -> some View {
         content
-
             .cornerRadius(5)
             .shadow(radius: 0.2)
             .padding(.vertical, 5)
             .padding(.horizontal)
-           
+        
     }
 }
 
 extension View {
-    func customGroupBoxStyle() -> some View {
+    func customGroupBoxStyle(backgroundColor: Color = Color(.systemBackground)) -> some View {
         self.modifier(CustomGroupBoxStyle())
     }
 }

@@ -30,7 +30,7 @@ struct AcidBaseBalanceInput: View {
                         showSheet.toggle()
                     }
                     .sheet(isPresented: $showSheet){
-                        BalancepH(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass, VentParameters: $patientData.VentParametersClass)
+                        Views(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass, VentParameters: $patientData.VentParametersClass)
                     }
                     .buttonStyle(CustomButtonStyle())
                 }

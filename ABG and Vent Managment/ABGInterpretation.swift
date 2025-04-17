@@ -11,6 +11,7 @@ struct ABGInterpretationSheet: View {
     
     @Binding var ABGData: ABG
     @Binding var VentData: VentSettings
+    
     var body: some View {
         ScrollView {
             
@@ -435,16 +436,17 @@ struct VentSettingInterpretationSheet: View {
                         Spacer()
                         VentSettingsInput(valueName: "IT", value: VentData.IT, unit: "sec")
                         Spacer()
-                        VentSettingsInput(valueName: "I:E", value: VentData.IE, unit: "")
+                        VentSettingsInput(valueName: "I:E", value: VentData.IE, unit: "ratio")
                         Spacer()
                     }
                 }
                 Divider()
-                    .padding(.top, 5)
-                    .padding(.bottom, 5)
+                    .frame(height: 0.5)
+                    .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .padding()
                 
                 VStack{
-                    Text("Patient Parameters:")
+                    Text("Parameters:")
                         .font(.headline)
                         .bold()
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -476,6 +478,12 @@ struct BalancepH: View {
     
     var body: some View {
         ScrollView{
+            
+            Text("""
+Patient is a 65 y/o female on VC/AC experiencing Mild Hoxpemia and Metabolic Acidosis.
+""")
+            .padding(.leading)
+            .padding(.trailing)
             ABGInterpretationSheet(ABGData: $ABGData, VentData: $VentData)
             VentSettingInterpretationSheet(VentData: $VentData, VentParameters: $VentParameters)
         }
