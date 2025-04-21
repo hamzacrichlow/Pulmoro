@@ -1,5 +1,5 @@
 //
-//  Calculations.swift
+//  Calculators List.swift
 //  PulmoroApp
 //
 //  Created by Hamza Crichlow on 3/8/25.
@@ -16,6 +16,11 @@ struct EcmoCalculations: Hashable {
 }
 struct Calculations: View {
     
+    @State private var gradientColors: [Color] = [
+        Color(.cyan).opacity(0.1),
+        Color(.cyan).opacity(0.2),
+        Color(.cyan).opacity(0.1)
+    ]
     
     var calculationsList: [RespiratoryCalculations] = [
         .init(name: "A-a Gradient") ,
@@ -44,12 +49,13 @@ struct Calculations: View {
     var body: some View {
     
         NavigationStack{
-            
+          
             ZStack{
-              
-                VStack{
-                    Text("Each calculator includes a comprehensive guide with detailed explanations, step-by-step instructions for real-world application, and practical case studies demonstrating clinical usage in the 'More Information' section.")
-                        .font(.caption)
+                MovingGradientView(colors: gradientColors)
+                    .ignoresSafeArea(edges: .all)
+          
+//                    Text("Each calculator includes a comprehensive guide with detailed explanations, step-by-step instructions for real-world application, and practical case studies demonstrating clinical usage in the 'More Information' section.")
+                       
                         .padding()
                     List{
                         Section("Respiratory") {
@@ -68,8 +74,9 @@ struct Calculations: View {
                             
                         }
                     }
-                    .scrollContentBackground(.hidden)
-                 
+                
+                   
+                    
                     .navigationTitle("Calculators")
                     .navigationDestination(for: RespiratoryCalculations.self) { calculation in
                         switch calculation.name {
@@ -102,11 +109,13 @@ struct Calculations: View {
                     
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                           InfoButtonView()
+                            InfoButtonView()
                         }
                     }
-                }
-            }
+                
+                
+            
+        }
         }
     }
         

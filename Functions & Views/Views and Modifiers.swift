@@ -8,12 +8,105 @@
 import SwiftUI
 
 
+struct CustomGroupBoxStyle2: ViewModifier {
+    var isCompleted: Bool
+    var cornerRadius: CGFloat
+    var borderWidth: CGFloat
+
+    init(isCompleted: Bool, cornerRadius: CGFloat = 8, borderWidth: CGFloat = 0.2) {
+        self.isCompleted = isCompleted
+        self.cornerRadius = cornerRadius
+        self.borderWidth = borderWidth
+    }
+
+    func body(content: Content) -> some View {
+        
+        if isCompleted {
+            content
+                .backgroundStyle(.thickMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(.thickMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.teal, .blue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: borderWidth
+                        )
+                )
+                .padding(.vertical, 8)
+                .padding(.horizontal)
+        } else {
+            content
+                .backgroundStyle(.regularMaterial)
+                .padding(.vertical, 8)
+                .padding(.horizontal)
+        }
+                  
+    }
+}
+
+
+extension View {
+    func customGroupBoxStyle2(
+        isCompleted: Bool,
+        cornerRadius: CGFloat = 8,
+        borderWidth: CGFloat = 0.2
+    ) -> some View {
+        self.modifier(CustomGroupBoxStyle2(
+            isCompleted: isCompleted,
+            cornerRadius: cornerRadius,
+            borderWidth: borderWidth
+        ))
+    }
+}
+
+
+
+struct CustomGroupBoxStyle1: ViewModifier {
+    var cornerRadius: CGFloat = 8
+    var borderWidth: CGFloat = 0.2
+    
+    func body(content: Content) -> some View {
+        content
+            .backgroundStyle(.thickMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .strokeBorder(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.teal, .blue]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: borderWidth
+                    )
+            )
+            .padding(.vertical, 8)
+            .padding(.horizontal)
+    }
+}
+
+extension View {
+    func customGroupBoxStyle1(backgroundColor: Color = Color(.systemBackground)) -> some View {
+        self.modifier(CustomGroupBoxStyle1())
+    }
+}
+
 struct Views: View {
     
     @Binding var ABGData: ABG
     @Binding var VentData: VentSettings
     @Binding var VentParameters: VentParameters
-    
+    @State private var gradientColors: [Color] = [
+        Color(.cyan).opacity(0.1),
+        Color(.cyan).opacity(0.2),
+        Color(.cyan).opacity(0.1)
+    ]
     var body: some View {
         
         let interpretation = interpretABG(
@@ -27,69 +120,84 @@ struct Views: View {
         let oxygenationStatus = interpretation.2
         
         NavigationStack{
+            ZStack{
+                MovingGradientView(colors: gradientColors)
+                                 .ignoresSafeArea(.all)
+               
+                    
             ScrollView{
-                Text("""
-            Summary
-            """)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.system(size: 16, weight: .bold))
-                        .padding(.leading)
-                        .padding(.bottom)
-                Text("""
-                    The patient is in an uncompensated metabolic acidosis with severe hypoxemia. FiO2 should be increased to correct oxygenation status. Vent settings can be adjusted temporarily to fix acid-base balance however metabolic intervention should take place. Consider using the anion-gap calculation to determine if bicorbante should be administered.
-                    """)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading)
-                .padding(.bottom)
+              
+            
                 
-                Text("Reccomended Vent Settings:")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.system(size: 16, weight: .bold))
-                    .padding(.leading)
                 GroupBox {
-                    VStack(alignment: .leading, spacing: 10) {
+                        
+        
+                    VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            VentCardInfo(VentData: $VentData)
+                            Label("Summary", systemImage: "lungs.fill")
+                                .font(.headline)
+                            Spacer()
+                            
+                            
                         }
-                     
+                       
+                        
+                        Text("""
+                                The patient is in an uncompensated metabolic acidosis with severe hypoxemia. FiO2 should be increased to correct oxygenation status. Vent settings can be adjusted temporarily to fix acid-base balance however metabolic intervention should take place. Consider using the anion-gap calculation to determine if bicorbante should be administered.
+                                """)
+                       
+                        .font(.system(size: 14))
+                        Text("""
+                                Reccomended Vent Settings:
+                                """)
+                       
+                        .font(.system(size: 14))
+                       
+                   
+                        
+//                        HStack {
+//                            Label("Ventilator Recommendations", systemImage: "inset.filled.tv")
+//                                .font(.headline)
+//                            Spacer()
+//                            
+//                            
+//                        }
+                        
+                    
+                        VentAdjustmentCardInfo(VentData: $VentData)
+                        
+                        
                     }
+                
                 }
-                .customGroupBoxStyle()
+                .customGroupBoxStyle1()
+//                .shadow(radius: 1)
+             
                 
-                Divider()
-                .frame(width: 350)
-                .frame(height: 1)
-                .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                .padding()
+               
                 
-            Text("""
-        Patient Assessment
-        """)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.system(size: 16, weight: .bold))
-                    .padding(.leading)
-                    .padding(.bottom, -5)
-          
-            ClickableGroupBox(title: "Blood Gas Interpretation",
-                              icon: "syringe.fill",
-                              info: "\(interpretation.1) with \(oxygenationStatus)",
-                              destination: Text("Blood Gas Interpretation"),
-                              content: ABGCardInfo(ABGData: $ABGData))
-            
-            ClickableGroupBox(title: "Ventilator Assessment",
-                              icon: "lungs.fill",
-                              info: "\(VentData.ventilationType) Ventilation | \(VentData.ventilationMode) ",
-                              destination: Text("Ventilator Assessment"),
-                              content: VentCardInfo(VentData: $VentData))
-            
-            ClickableGroupBox(title: "Clinical Reference",
-                              icon: "book.closed.fill",
-                              destination: Text("Clinical Reference"),
-                              description: "Evidence-based explanations of physiological principles and clinical guidelines for respiratory management.")
-            ClickableGroupBox(title: "Risk  Factors",
-                              icon: "exclamationmark.triangle.fill",
-                              destination: Text("Risk  Factors"),
-                              description: "Patient-specific warnings, potential complications, and contraindications based on current clinical status.")
+                
+                
+                
+                ClickableGroupBox(title: "Blood Gas Interpretation",
+                                  icon: "syringe.fill",
+                                  destination: bloodGasInterpretation(ABGData: $ABGData, VentData: $VentData, VentParameters: $VentParameters),
+                                  content: ABGCardInfo(ABGData: $ABGData))
+                
+                ClickableGroupBox(title: "Ventilator Assessment",
+                                  icon: "inset.filled.tv",
+                                  destination: Text("Ventilator Assessment"),
+                                  content: VentCardInfo(VentData: $VentData))
+                
+                ClickableGroupBox(title: "Clinical Reference",
+                                  icon: "book.closed.fill",
+                                  destination: Text("Clinical Reference"),
+                                  description: "Evidence-based explanations of physiological principles and clinical guidelines for respiratory management.")
+                ClickableGroupBox(title: "Risk  Factors",
+                                  icon: "exclamationmark.triangle.fill",
+                                  destination: Text("Risk  Factors"),
+                                  description: "Patient-specific warnings, potential complications, and contraindications based on current clinical status.")
+            }
         }
             .applyCalculationToolBar(title: "Care Plan", destination: InfoButtonView())
     }
@@ -103,6 +211,17 @@ struct ClickableGroupBox<Destination: View, Content: View>: View {
     var destination: Destination
     var description: String?
     var content: Content?
+    
+    init(title: String,
+         icon: String,
+         destination: Destination,
+         content: Content) {
+        self.title = title
+        self.icon = icon
+        self.destination = destination
+        self.description = nil
+        self.content = content
+    }
     
     // Standard initializer with content
     init(title: String,
@@ -134,28 +253,32 @@ struct ClickableGroupBox<Destination: View, Content: View>: View {
     var body: some View {
         NavigationLink(destination: destination) {
             GroupBox {
+              
                 VStack(alignment: .leading, spacing: 10) {
+                    
                     HStack {
                         Label(title, systemImage: icon)
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.blue)
+                            .font(.system(size: 14))
+                            
                         Spacer()
                         
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 12))
+                            .font(.system(size: 10))
                             .foregroundColor(.secondary)
                     }
-                    
+                    Divider()
+                        .frame(height: 0.3)
+                        .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .padding(.bottom, 5)
                     // Use the description parameter if provided, else use info if provided
                     if let description = description {
                         Text(description)
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.system(size: 14))
                     } else if let info = info {
                         Text(info)
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.system(size: 14))
                         
-                        Divider()
-                            .frame(height: 1)
+                        
                     }
                     
                     // Show content if provided
@@ -163,6 +286,7 @@ struct ClickableGroupBox<Destination: View, Content: View>: View {
                         content
                     }
                 }
+            
             }
             .customGroupBoxStyle()
         }
@@ -214,35 +338,57 @@ struct VentCardInfo: View {
         }
     }
 }
-
-//#Preview {
-//    // Create a preview data instance
-//    let previewData = PatientData()
-//    
-//    // Set up ABG preview data with reasonable values
-//    previewData.ABGClass.pH = 7.30
-//    previewData.ABGClass.paCO2 = 40
-//    previewData.ABGClass.HCO3 = 18
-//    previewData.ABGClass.paO2 = 40
-//    previewData.ABGClass.saO2 = 95
-//    previewData.ABGClass.BE = 0
-//    
-//    // Set up VentSettings preview data
-//    previewData.VentSettingsClass.VT = 500
-//    previewData.VentSettingsClass.RR = 12
-//    previewData.VentSettingsClass.FiO₂ = 40
-//    previewData.VentSettingsClass.PEEP = 5
-//    previewData.VentSettingsClass.IT = 1.0
-//    previewData.VentSettingsClass.IE = 1.2
-//    previewData.VentSettingsClass.ventilationMode = "VC/AC"
-//    previewData.VentSettingsClass.ventilationType = "Invasive"
-//    
-//    // Return the Views with constant bindings for preview
-//    return Views(
-//        ABGData: .constant(previewData.ABGClass),
-//        VentData: .constant(previewData.VentSettingsClass)
-//    )
-//}
+struct VentAdjustmentCardInfo: View {
+    
+    @Binding var VentData: VentSettings
+    
+    var body: some View {
+        HStack{
+            Spacer()
+            VentSettingAdjustment(valueName: "VT", value: VentData.VT, unit: "mL", arrowDirection: "arrowtriangle.up.fill")
+            Spacer()
+            VentSettingAdjustment(valueName: "RR", value: VentData.RR, unit: "b/min", arrowDirection: "arrow.up")
+            Spacer()
+            VentSettingAdjustment(valueName: "FiO₂", value: VentData.FiO₂, unit: "%", arrowDirection: "arrow.up.circle.dotted")
+            Spacer()
+            VentSettingAdjustment(valueName: "PEEP", value: VentData.PEEP, unit: "cmH₂O", arrowDirection: "arrowshape.up.fill")
+            Spacer()
+            VentSettingAdjustment(valueName: "IT", value: VentData.IT, unit: "sec", arrowDirection: "")
+            Spacer()
+            VentSettingAdjustment(valueName: "I:E", value: VentData.IE, unit: "ratio", arrowDirection: "")
+            Spacer()
+        }
+    }
+}
+#Preview {
+    // Create a preview data instance
+    let previewData = PatientData()
+    
+    // Set up ABG preview data with reasonable values
+    previewData.ABGClass.pH = 7.30
+    previewData.ABGClass.paCO2 = 40
+    previewData.ABGClass.HCO3 = 18
+    previewData.ABGClass.paO2 = 40
+    previewData.ABGClass.saO2 = 95
+    previewData.ABGClass.BE = 0
+    
+    // Set up VentSettings preview data
+    previewData.VentSettingsClass.VT = 500
+    previewData.VentSettingsClass.RR = 12
+    previewData.VentSettingsClass.FiO₂ = 40
+    previewData.VentSettingsClass.PEEP = 5
+    previewData.VentSettingsClass.IT = 1.0
+    previewData.VentSettingsClass.IE = 1.2
+    previewData.VentSettingsClass.ventilationMode = "VC/AC"
+    previewData.VentSettingsClass.ventilationType = "Invasive"
+    
+    // Return the Views with constant bindings for preview
+    return Views(
+           ABGData: .constant(previewData.ABGClass),
+           VentData: .constant(previewData.VentSettingsClass),
+           VentParameters: .constant(previewData.VentParametersClass) // Add this line
+       )
+}
 
 
 struct TabBar: View {
@@ -259,10 +405,10 @@ struct TabBar: View {
                     Text("Simulator")
                 }
          
-            AcidBaseBalanceInput()
+            PatientCare()
                 .tabItem{
-                    Image(systemName: "syringe")
-                    Text("Acid Base Balance")
+                    Image(systemName: "cross.fill")
+                    Text("Patient Care")
                 }
                 .tag(0)
             Calculations()
@@ -357,7 +503,7 @@ struct Diagnostic: View {
     var body: some View {
         VStack{
             Text(formattedValue)
-                    .font(.system(size: 15))
+                    .font(.system(size: 14))
                     .padding(.top,2)
                     .padding(.bottom,0.5)
                     .foregroundColor(value == nil ? .gray : (isNormal ? .primary : .red))
@@ -367,6 +513,7 @@ struct Diagnostic: View {
             
         Text("\(unit)")
                 .font(.system(size: 8))
+                .foregroundColor(.secondary)
                
         }
     }
@@ -390,7 +537,7 @@ struct VentSettingsInput: View {
     var body: some View {
         VStack{
             Text(formattedValue)
-                    .font(.system(size: 15))
+                    .font(.system(size: 14))
                     .padding(.top,2)
                     .padding(.bottom,0.5)
 
@@ -400,6 +547,62 @@ struct VentSettingsInput: View {
             
         Text("\(unit)")
                 .font(.system(size: 8))
+                .foregroundColor(.secondary)
+               
+        }
+    }
+}
+struct VentSettingAdjustment: View {
+    
+    let valueName: String
+    let value: Double?
+    let unit: String
+    let arrowDirection: String?
+  
+    var formattedValue: String {
+        if let value = value {
+            return String(value)
+        } else {
+            return "-"
+        }
+    }
+
+    var body: some View {
+        if arrowDirection == nil {
+            VStack{
+                    Text(formattedValue)
+                        .font(.system(size: 14))
+                        .padding(.top,2)
+                        .padding(.bottom,0.5)
+                
+                Text("\(valueName)")
+                    .font(.system(size: 10))
+                    .padding(.bottom,0.5)
+                
+                Text("\(unit)")
+                    .font(.system(size: 8))
+                    .foregroundColor(.secondary)
+            }
+        } else {
+            VStack{
+             
+                    Text(formattedValue)
+                        .font(.system(size: 14))
+                        .padding(.top,2)
+                        .padding(.bottom,0.5)
+                
+                HStack{
+                    Image(systemName: arrowDirection!)
+                        .font(.system(size: 9))
+                        .foregroundStyle(.blue)
+                    Text("\(valueName)")
+                        .font(.system(size: 10))
+                        .padding(.bottom,0.5)
+                }
+                Text("\(unit)")
+                    .font(.system(size: 8))
+                    .foregroundColor(.secondary)
+            }
                
         }
     }
@@ -651,6 +854,7 @@ struct BackButton: View {
     @Environment(\.presentationMode) var presentationMode
     
     var systemImage: String
+    var title: String?
     
 var body : some View {
     
@@ -900,17 +1104,47 @@ struct InfoButtonView: View {
 }
 
 
-
-
+struct InfoButtonView2<Content: View>: View {
+    
+    @State private var showSheet: Bool = false
+    var content: Content
+    
+    // This initializer allows passing content directly
+    init(content: Content) {
+        self.content = content
+    }
+    
+    var body: some View {
+        Button(action: {
+            showSheet.toggle()
+        }) {
+            Image(systemName: "info.circle")
+                .overlay(
+                    LinearGradient(
+                        gradient: Gradient(colors: [.teal, .blue]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .mask(
+                        Image(systemName: "info.circle")
+                    )
+                )
+        }
+        .sheet(isPresented: $showSheet) {
+            content
+                .presentationDetents([.large])
+        }
+        .padding()
+    }
+}
 
 
 struct CustomGroupBoxStyle: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .cornerRadius(5)
-            .shadow(radius: 0.2)
-            .padding(.vertical, 5)
+            .backgroundStyle(.regularMaterial)
+            .padding(.vertical, 8)
             .padding(.horizontal)
         
     }
@@ -996,9 +1230,17 @@ struct CustomButtonStyle: ButtonStyle {
 struct AcidBaseBalanceInstructionsView: View {
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Enter the patient's ABG results, vent settings, and vent parameters to receive recommended treatment for acid-base balance.")
+            Text("Enter your patient's information and ABG results to receive ABG interpretations and treatment recommendations.")
         }
-        .font(.caption)
+        .padding()
+    }
+}
+
+struct CarePlanInstructionsView: View {
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Enter your patient's information, vital signs, ABG results, vent settings, and vent parameters to receive recommended vent setting changes and treatment for acid-base balance.")
+        }
         .padding()
     }
 }
@@ -1324,3 +1566,142 @@ The main goal is always to save lives and improve patient outcomes by providing 
     }
 }
 
+//struct MovingGradientView: View {
+//    @State private var startPoint = UnitPoint(x: 0.4, y: 0.4)
+//    @State private var endPoint = UnitPoint(x: 0.6, y: 0.6)
+//    
+//
+//    let timer = Timer.publish(every: 3.0, on: .main, in: .common).autoconnect()
+//    let colors: [Color]
+//    
+//    var body: some View {
+//        Rectangle()
+//            .fill(
+//                LinearGradient(
+//                    gradient: Gradient(colors: colors),
+//                    startPoint: startPoint,
+//                    endPoint: endPoint
+//                )
+//            )
+//            .onReceive(timer) { _ in
+//               
+//                withAnimation(.easeInOut(duration: 4)) {
+//                    
+//                    startPoint = UnitPoint(x: CGFloat.random(in: 0.35...0.45),
+//                                           y: CGFloat.random(in: 0.35...0.45))
+//                    endPoint = UnitPoint(x: CGFloat.random(in: 0.50...0.65),
+//                                         y: CGFloat.random(in: 0.50...0.65))
+//                }
+//            }
+//    }
+//}
+struct MovingGradientView: View {
+    @State private var startPoint = UnitPoint(x: 0.1, y: 0.1)  // Much closer to the edge
+    @State private var endPoint = UnitPoint(x: 0.9, y: 0.9)    // Much closer to the opposite edge
+    
+    let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+    let colors: [Color]
+    
+    var body: some View {
+        Rectangle()
+            .fill(
+                LinearGradient(
+                    gradient: Gradient(colors: colors),
+                    startPoint: startPoint,
+                    endPoint: endPoint
+                )
+            )
+            .onReceive(timer) { _ in
+                withAnimation(.easeInOut(duration: 4)) {
+                    // Make the animation range wider to keep the center color dominant
+                    startPoint = UnitPoint(x: CGFloat.random(in: 0.05...0.15),
+                                           y: CGFloat.random(in: 0.05...0.15))
+                    endPoint = UnitPoint(x: CGFloat.random(in: 0.85...0.95),
+                                         y: CGFloat.random(in: 0.85...0.95))
+                }
+            }
+    }
+}
+
+
+struct InputField: View {
+    //THis is the label that appears next to the text field
+    var label: String
+    // THe unit of measurment will appear in the box for example if the text field is labeled Time then the unit can be named sec for seconds, or min for minutes.
+    var units: String
+    //The binding variable is whats going to bind the information in the text field.
+    @Binding var value: Double
+    //
+    @State private var text : String = ""
+    
+@FocusState private var amountIsFocused: Bool
+    
+    var body: some View {
+        HStack{
+            Text(label)
+                .frame(width: 75, alignment: .center)
+            ZStack{
+                //This is the textfield
+                TextField("", text: $text)
+                                .keyboardType(.decimalPad)
+                                .onChange(of: text) { oldValue, newValue in
+                                    let filtered = newValue.filter { "0123456789.".contains($0) }
+                                    if filtered.count <= 4 {
+                                        text = filtered
+                                        if let numberedValue = Double(text) {
+                                            value = numberedValue
+                                        }
+                                    }
+                                }
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 80)
+                                .keyboardType(.decimalPad)
+                                .focused($amountIsFocused)
+                               
+                
+                              
+                //This is where the units will appear
+                            Text(units)
+                                .font(.system(size: 10, weight: .thin))
+                                .frame(width: 70, alignment: .trailing)
+                                .padding(5)
+            }
+        }
+    }
+ 
+}
+
+struct BiggerInputField: View {
+    var label: String
+    var units: String
+    
+    @Binding var value: Double
+    @State private var text : String = ""
+    
+    var body: some View {
+        HStack{
+            Text(label)
+                .frame(width: 100, alignment: .center)
+            ZStack{
+                
+                TextField("", text: $text)
+                                .keyboardType(.decimalPad)
+                                .onChange(of: text) { oldValue, newValue in
+                                    let filtered = newValue.filter { "0123456789.".contains($0) }
+                                    if filtered.count <= 4 {
+                                        text = filtered
+                                        if let numberedValue = Double(text) {
+                                            value = numberedValue
+                                        }
+                                    }
+                                }
+                                .textFieldStyle(.roundedBorder)
+                                .frame(width: 90)
+                            Text(units)
+                                .font(.system(size: 10, weight: .thin))
+                                .frame(width: 70, alignment: .trailing)
+                                .padding(5)
+                }
+        }
+    }
+}

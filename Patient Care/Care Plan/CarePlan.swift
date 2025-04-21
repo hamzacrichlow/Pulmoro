@@ -8,40 +8,55 @@
 import SwiftUI
 
 
-struct AcidBaseBalanceInput: View {
+
+struct CarePlan: View {
     
     @StateObject var patientData = PatientData()
-    @State private var showSheet: Bool = false
+   
+    @State private var gradientColors: [Color] = [
+        Color(.cyan).opacity(0.1),
+        Color(.cyan).opacity(0.2),
+        Color(.cyan).opacity(0.1)
+    ]
     
     var body: some View {
         NavigationStack{
+            ZStack{
+                MovingGradientView(colors: gradientColors)
+                    .ignoresSafeArea(edges: .all)
             ScrollView{
+           
                 VStack{
-                    AcidBaseBalanceInstructionsView()
+                    CarePlanInstructionsView()
+                   
                     PatientInformationView(PatientInformationData: $patientData.PatientInformatioinClass)
+                   
                     VitalsView(VitalsData: $patientData.VitalsClass)
-                  
+                    
                     
                     ABGView(ABGData: $patientData.ABGClass)
                     
                     VentSettingsAndParametersView(VentData: $patientData.VentSettingsClass, VentParametersData: $patientData.VentParametersClass)
                     
-                    Button("Interpret ABG") {
-                        showSheet.toggle()
-                    }
-                    .sheet(isPresented: $showSheet){
-                        Views(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass, VentParameters: $patientData.VentParametersClass)
-                    }
-                    .buttonStyle(CustomButtonStyle())
+                    NavigationLink(destination: Views(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass, VentParameters: $patientData.VentParametersClass)) {
+                                              Text("Create Care Plan")
+                                          }
+                                          .buttonStyle(CustomButtonStyle())
                 }
                 
             }
-            .navigationTitle(Text("Acid Base Balance"))
-            .toolbar{
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    InfoButtonView()
+            .navigationBarBackButtonHidden(true)
+            .navigationBarTitle("Care Plan", displayMode: .automatic)
+            .toolbar {
+               
+                ToolbarItem(placement: .navigationBarLeading) {
+                    BackButton(systemImage: "chevron.backward")
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                               InfoButtonView()
+                          }
             }
+        }
         }
     }
 }
@@ -50,246 +65,59 @@ struct AcidBaseBalanceInput: View {
     
 
 #Preview {
-    AcidBaseBalanceInput()
+    CarePlan()
 }
 
 
-struct PatientInformation {
-    var age: Double?
-    var height: Double?
-    var gender: String?
-}
 
-/// Arterial Blood Gas (ABG) lab values.
-struct ABG {
-    var FiO2: Double?
-    var pH: Double?
-    var paCO2: Double?
-    var HCO3: Double?
-    var paO2: Double?
-    var saO2: Double?
-    var BE: Double?
-    
-    /// Normal Ranges for ABG lab values.
-    struct NormalRanges {
-        let pH: ClosedRange<Double>
-        let paCO2: ClosedRange<Double>
-        let HCO3: ClosedRange<Double>
-        let paO2: ClosedRange<Double>
-        let saO2: ClosedRange<Double>
-        let BE: ClosedRange<Double>
-   
-    }
-    let normalRanges: NormalRanges = NormalRanges(
-        pH: 7.35...7.45,
-        paCO2: 35.0...45.0,
-        HCO3: 22.0...26.0,
-        paO2: 80...100,
-        saO2: 97.0...100.0,
-        BE: -2.0...2.0
-    )
-}
 
-struct Vitals {
-    var HR: Double?
-    var systolicBP: Double?
-    var diastolicBP: Double?
-    var SpO2: Double?
-    var f: Double?
-    var temp: Double?
+struct PatientInformationView: View{
     
-    struct NormalRanges {
-        let HR: ClosedRange<Double>
-        let systolicBP: ClosedRange<Double>
-        let diastolicBP: ClosedRange<Double>
-        let SpO2: ClosedRange<Double>
-        let f: ClosedRange<Double>
-        let temp: ClosedRange<Double>
-    }
+    @Binding var PatientInformationData: PatientInformation
     
-    let normalRanges: NormalRanges = NormalRanges(
-        HR: 60...100,
-        systolicBP: 60...100,
-        diastolicBP: 60...100,
-        SpO2: 92...100,
-        f: 12...20,
-        temp: 36...39
-        )
-}
-
-struct VentSettings {
-    var ventilationType: String = "Invasive"
-    var ventilationMode: String = "PRVC"
+    var isCompleted: Bool {
+         // You can add stricter conditions here as needed
+         return (PatientInformationData.age ?? 0) > 0 &&
+                (PatientInformationData.height ?? 0) > 0 &&
+                (PatientInformationData.weight ?? 0) > 0 &&
+                !(PatientInformationData.gender?.isEmpty ?? true)
+     }
     
-    var VT: Double?
-    var PC: Double?
-    var RR: Double?
-    var FiO₂: Double?
-    var PEEP: Double?
-    var pressureSupport: Double?
-    var flow: Double?
-    var IT : Double?
-    var IE : Double?
-}
-
-struct VentParameters {
-    var VTe : Double?
-    var fTOT : Double?
-    var PIP : Double?
-    var MAP : Double?
-    var pPlat : Double?
-    var autoPEEP: Double?
-    var ptLeak : Double?
-    
-    struct NormalRanges {
-        let VTe: ClosedRange<Double>
-        let fTOT: ClosedRange<Double>
-        let PIP: ClosedRange<Double>
-        let pPlat: ClosedRange<Double>
-        let autoPEEP: ClosedRange<Double>
-        let ptLeak: ClosedRange<Double>
-    }
-    
-    let normalRanges: NormalRanges = NormalRanges(
-        VTe: 0...600,
-        fTOT: 12...20,
-        PIP: 0...30,
-        pPlat: 0...28,
-        autoPEEP: 0...10,
-        ptLeak: 0...50
-    )
-}
-
-class PatientData: ObservableObject{
-    @Published var PatientInformatioinClass = PatientInformation()
-    @Published var VitalsClass = Vitals()
-    @Published var ABGClass = ABG()
-    @Published var VentSettingsClass = VentSettings(
-        ventilationType: "",
-        ventilationMode: "")
-    @Published var VentParametersClass = VentParameters()
-   
-    
-   
-}
-
-struct InputField: View {
-    //THis is the label that appears next to the text field
-    var label: String
-    // THe unit of measurment will appear in the box for example if the text field is labeled Time then the unit can be named sec for seconds, or min for minutes.
-    var units: String
-    //The binding variable is whats going to bind the information in the text field.
-    @Binding var value: Double
-    //
-    @State private var text : String = ""
-    
-    var body: some View {
-        HStack{
-            Text(label)
-                .frame(width: 75, alignment: .center)
-            ZStack{
-                //This is the textfield
-                TextField("", text: $text)
-                                .keyboardType(.decimalPad)
-                                .onChange(of: text) { oldValue, newValue in
-                                    let filtered = newValue.filter { "0123456789.".contains($0) }
-                                    if filtered.count <= 4 {
-                                        text = filtered
-                                        if let numberedValue = Double(text) {
-                                            value = numberedValue
-                                        }
-                                    }
-                                }
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 80)
-                //This is where the units will appear
-                            Text(units)
-                                .font(.system(size: 10, weight: .thin))
-                                .frame(width: 70, alignment: .trailing)
-                                .padding(5)
-            }
-        }
+     var body: some View {
+         GroupBox(label: Label("Patient Information", systemImage: "person.fill")){
+             Divider()
+                 .frame(height: 1)
+                 .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                 .padding(.bottom, 5)
+          
+                 VStack{
+                     HStack{
+                         InputField(label: "Age", units: "", value: Binding(
+                            get: {PatientInformationData.age ?? 0.0},
+                            set: {PatientInformationData.age = $0}
+                         ))
+                         Spacer()
+                         patientInformationGenderPicker(gender: $PatientInformationData.gender)
+                     }
+                     HStack{
+                         InputField(label: "Height", units: "inches", value: Binding(
+                            get: {PatientInformationData.age ?? 0.0},
+                            set: {PatientInformationData.age = $0}
+                         ))
+                         Spacer()
+                         InputField(label: "Weight", units: "lbs", value: Binding(
+                            get: {PatientInformationData.age ?? 0.0},
+                            set: {PatientInformationData.age = $0}
+                         ))
+                     }
+                 }
+             
+         }
+         .customGroupBoxStyle2(isCompleted: isCompleted)
+         
     }
 }
 
-struct BiggerInputField: View {
-    var label: String
-    var units: String
-    
-    @Binding var value: Double
-    @State private var text : String = ""
-    
-    var body: some View {
-        HStack{
-            Text(label)
-                .frame(width: 100, alignment: .center)
-            ZStack{
-                
-                TextField("", text: $text)
-                                .keyboardType(.decimalPad)
-                                .onChange(of: text) { oldValue, newValue in
-                                    let filtered = newValue.filter { "0123456789.".contains($0) }
-                                    if filtered.count <= 4 {
-                                        text = filtered
-                                        if let numberedValue = Double(text) {
-                                            value = numberedValue
-                                        }
-                                    }
-                                }
-                                .textFieldStyle(.roundedBorder)
-                                .frame(width: 90)
-                            Text(units)
-                                .font(.system(size: 10, weight: .thin))
-                                .frame(width: 70, alignment: .trailing)
-                                .padding(5)
-                }
-        }
-    }
-}
-
-struct ABGView: View {
-    @Binding var ABGData: ABG
-    var body: some View {
-        GroupBox(label: Label("Arterial Blood Gas", systemImage: "syringe.fill")){
-            Divider()
-                .frame(height: 2)
-                .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                .padding(.bottom, 5)
-            HStack{
-                VStack{
-                    InputField(label: "pH", units: "", value: Binding(
-                        get: {ABGData.pH ?? 0.0},
-                        set: {ABGData.pH = $0}
-                    ))
-                    InputField(label: "PaCO₂", units: "mmHg", value: Binding(
-                        get: {ABGData.paCO2 ?? 0.0},
-                        set: {ABGData.paCO2 = $0}
-                    ))
-                    InputField(label: "HCO₃", units: "mEq/L", value: Binding(
-                        get: {ABGData.HCO3 ?? 0.0},
-                        set: {ABGData.HCO3 = $0}
-                    ))
-                }
-                VStack{
-                    InputField(label: "PaO₂", units: "mmHg", value: Binding(
-                        get: {ABGData.paO2 ?? 0.0},
-                        set: {ABGData.paO2 = $0}
-                    ))
-                    InputField(label: "SaO₂", units: "%", value: Binding(
-                        get: {ABGData.saO2 ?? 0.0},
-                        set: {ABGData.saO2 = $0}
-                    ))
-                    InputField(label: "B.E", units: "mEq/L", value: Binding(
-                        get: {ABGData.BE ?? 0.0},
-                        set: {ABGData.BE = $0}
-                    ))
-                }
-            }
-        }
-        .customGroupBoxStyle()
-     
-            }
-        }
 
 struct VitalsView: View {
     
@@ -298,7 +126,7 @@ struct VitalsView: View {
     var body: some View {
         GroupBox(label: Label("Vital Signs", systemImage: "waveform.path.ecg")){
             Divider()
-                .frame(height: 2)
+                .frame(height: 1)
                 .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
                 .padding(.bottom, 5)
             HStack{
@@ -331,11 +159,6 @@ struct VitalsView: View {
                             ))
                         }
                     }
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 5)
-//                            .stroke(Color.gray.opacity(0.03), lineWidth: 1)
-//                            .frame(width: 175, height: 90)
-//                    )
                     
                 }
             }
@@ -359,43 +182,33 @@ struct VitalsView: View {
     }
 }
 
-struct PatientInformationView: View{
-    
-    @Binding var PatientInformationData: PatientInformation
-    
-     var body: some View {
-         GroupBox(label: Label("Patient Information", systemImage: "person.fill")){
-             Divider()
-                 .frame(height: 2)
-                 .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                 .padding(.bottom, 5)
-          
-                 VStack{
-                     HStack{
-                         InputField(label: "Age", units: "", value: Binding(
-                            get: {PatientInformationData.age ?? 0.0},
-                            set: {PatientInformationData.age = $0}
-                         ))
-                         Spacer()
-                         patientInformationGenderPicker(gender: $PatientInformationData.gender)
-                     }
-                     HStack{
-                         InputField(label: "Height", units: "inches", value: Binding(
-                            get: {PatientInformationData.age ?? 0.0},
-                            set: {PatientInformationData.age = $0}
-                         ))
-                         InputField(label: "Weight", units: "lbs", value: Binding(
-                            get: {PatientInformationData.age ?? 0.0},
-                            set: {PatientInformationData.age = $0}
-                         ))
-                     }
-                 }
-             
-         }
-         .customGroupBoxStyle()
-         
+
+struct VentSettingsView: View {
+    @Binding var VentData: VentSettings
+    var body: some View {
+        
+        GroupBox(label: Label("Vent Settings", systemImage: "inset.filled.tv")) {
+            Divider()
+                .frame(height: 1)
+                .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .padding(.bottom, 5)
+            Picker("Ventilation Type", selection: $VentData.ventilationType) {
+                Text("Invasive").tag("Invasive")
+                Text("Noninvasive").tag("Noninvasive")
+            }
+            .customSegmentedPickerStyle()
+            
+            if VentData.ventilationType == "Invasive" {
+                InvasiveVentSettingsView(VentData: $VentData)
+            } else {
+                NonInvasiveVentSettingsView(VentData: $VentData)
+            }
+        }
+        .customGroupBoxStyle()
+       
     }
 }
+
 
 struct VentParametersView: View {
     @Binding var VentParametersData: VentParameters
@@ -403,7 +216,7 @@ struct VentParametersView: View {
     var body: some View {
         GroupBox(label: Label("Vent Parameters", systemImage: "lungs.fill")) {
             Divider()
-                .frame(height: 2)
+                .frame(height: 1)
                 .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
                 .padding(.bottom, 5)
             HStack{
@@ -472,31 +285,6 @@ struct VentParametersView: View {
 
 
 
-struct VentSettingsView: View {
-    @Binding var VentData: VentSettings
-    var body: some View {
-        
-        GroupBox(label: Label("Vent Settings", systemImage: "inset.filled.tv")) {
-            Divider()
-                .frame(height: 2)
-                .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
-                .padding(.bottom, 5)
-            Picker("Ventilation Type", selection: $VentData.ventilationType) {
-                Text("Invasive").tag("Invasive")
-                Text("Noninvasive").tag("Noninvasive")
-            }
-            .customSegmentedPickerStyle()
-            
-            if VentData.ventilationType == "Invasive" {
-                InvasiveVentSettingsView(VentData: $VentData)
-            } else {
-                NonInvasiveVentSettingsView(VentData: $VentData)
-            }
-        }
-        .customGroupBoxStyle()
-       
-    }
-}
 
 
 ///This View handles the changing of parameters based on if the patient is on Invasive or Non-invasive Ventilation ventilation. It will Change the Vent Parameters Group Box to match invasive or noninvasive..
