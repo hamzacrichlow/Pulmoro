@@ -42,7 +42,10 @@ struct Pack_Years: View {
 //                        .disabled(!isFormValid)
 //                        .disabled(!isFormValid)
                         if let packYear = packYear {
+                            
                             AnswerView(value: packYear, unit: "")
+                            Text("pack years")
+                                .font(.caption)
                         }
                     }
                 }

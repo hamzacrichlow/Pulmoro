@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PFRatio: View {
+struct PFRatioCalculator: View {
     
     @State private var PaO2: Double = 0
     @State private var FiO2: Double = 0
@@ -21,14 +21,14 @@ struct PFRatio: View {
         ScrollView{
             
             VStack {
-                GroupBox(label: Label("P/F Ratio Calculator", systemImage: "lungs.fill")){
+                GroupBox(label: Label("PaO₂/FiO₂ Ratio Calculator", systemImage: "lungs.fill")){
                     VStack{
                         
-                        CalculatorInstructions(instructions: "Enter the patient's PaO2 and FiO2 to calculate the P/F Ratio.")
+                        CalculatorInstructions(instructions: "Enter the patient's PaO₂ and FiO₂ to calculate the PaO₂/FiO₂ Ratio.")
                    
                         HStack{
-                            InputField(label: "PaO2", units: "mEq/L", value: $PaO2)
-                            InputField(label: "FiO2", units: "mEq/L", value: $FiO2)
+                            InputField(label: "PaO₂", units: "mEq/L", value: $PaO2)
+                            InputField(label: "FiO₂", units: "mEq/L", value: $FiO2)
                         }
                         
                     
@@ -67,7 +67,7 @@ struct PFRatio: View {
 }
 
 #Preview {
-    PFRatio()
+    PFRatioCalculator()
 }
 
 func calculatePFRatio(PaO2: Double, FiO2: Double)-> Double {

@@ -27,8 +27,6 @@ struct Calculations: View {
         .init(name: "Anion Gap"),
         .init(name: "Compliance"),
         .init(name: "Desired PaCO₂"),
-        .init(name: "Extubation Readiness"),
-        .init(name: "Fick Calculation"),
         .init(name: "Oxygen Content") ,
         .init(name: "Oxygen Index"),
         .init(name: "Oxygen Tank Duration") ,
@@ -39,6 +37,7 @@ struct Calculations: View {
     ]
     
     var ecmoCalculationsList: [EcmoCalculations] = [
+        .init(name: "Fick Calculation"),
         .init(name: "Cardiovascular Calculators"),
         .init(name: "Recirculation Formula"),
         .init(name: "ECMO Flow Calculator"),
@@ -82,6 +81,8 @@ struct Calculations: View {
                         switch calculation.name {
                         case "A-a Gradient":
                             AaGradientCalculator.init()
+                        case "Anion Gap":
+                            AnionGapCalculator.init()
                         case "Compliance":
                             ComplianceCalculator.init()
                         case "Desired PaCO₂":
@@ -92,6 +93,10 @@ struct Calculations: View {
                             OxygenIndexCalculator.init()
                         case "Oxygen Tank Duration":
                             OxygenTankDurationCalculator.init()
+                        case "P/F Ratio":
+                            PFRatioCalculator.init()
+                        case "Pack Years":
+                            Pack_Years.init()
                         case "Tidal Volume":
                             TidalVolumeCalculation.init()
                         default:

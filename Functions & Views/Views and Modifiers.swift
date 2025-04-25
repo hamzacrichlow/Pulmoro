@@ -116,8 +116,7 @@ struct Views: View {
             PaO2: ABGData.paO2,
             FiO2: VentData.FiO₂
         )
-        let condition = interpretation.4
-        let oxygenationStatus = interpretation.2
+      
         
         NavigationStack{
             ZStack{

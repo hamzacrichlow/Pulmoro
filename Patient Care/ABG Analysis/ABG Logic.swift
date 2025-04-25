@@ -54,7 +54,33 @@ func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO
     }
     
     switch (pH, paCO2, HCO3) {
+    case let (pH, paCO2, HCO3) where pH < 7.35 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
+        pHInterpretation = "ABG Gross Error Acidosis"
+        condition = "ABG Gross Error Acidosis"
         
+    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
+        pHInterpretation = "ABG Gross Error Alkalosis"
+        condition = "ABG Gross Error Alkalosis"
+        
+    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && (paCO2 < 35 || paCO2 > 45) && HCO3 <= 26 && HCO3 >= 22:
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+        
+    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && paCO2 >= 35 && paCO2 <= 45 && (HCO3 > 26 || HCO3 < 22):
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+    
+    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 > 45 || HCO3 < 22:
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+        
+    case let (pH, paCO2, HCO3) where pH < 7.35 && (paCO2 < 35 || HCO3 > 28):
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+        //Handle Extremes
+    case let (pH, paCO2, HCO3) where pH < 6.6 || pH > 7.7 || paCO2 > 90 || paCO2 < 5 || HCO3 > 60 || HCO3 < 2:
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
     case let (pH, paCO2, HCO3) where pH < 7.35 && paCO2 > 45 && HCO3 >= 22 && HCO3 <= 26:
         pHInterpretation = "Uncompensated Respiratory Acidosis"
         
@@ -103,29 +129,7 @@ func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO
     case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 < 35 && HCO3 > 26:
         pHInterpretation = "Mixed (Combined) Alkalosis"
         
-    case let (pH, paCO2, HCO3) where pH < 7.35 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
-        pHInterpretation = "ABG Gross Error Acidosis"
-        condition = "ABG Gross Error Acidosis"
-        
-    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
-        pHInterpretation = "ABG Gross Error Alkalosis"
-        condition = "ABG Gross Error Alkalosis"
-        
-    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && (paCO2 < 35 || paCO2 > 45) && HCO3 <= 26 && HCO3 >= 22:
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-        
-    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && paCO2 >= 35 && paCO2 <= 45 && (HCO3 > 26 || HCO3 < 22):
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-    
-    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 > 45 || HCO3 < 22:
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-        
-    case let (pH, paCO2, HCO3) where pH < 7.35 && (paCO2 < 35 || HCO3 > 28):
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
+  
         
     default:
         pHInterpretation = "Normal Acid-Base Status"
