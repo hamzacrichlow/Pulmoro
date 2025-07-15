@@ -15,7 +15,7 @@ struct DesiredCO2InformationPage: View {
               DesireCO2CalculationCaseStudy()
             }
         }
-        .applyCalculationToolBar(title: "Desired PaCO₂", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Desired PaCO₂", destination: InfoButtonView(destination: Sources()))
     }
 }
 #Preview {

@@ -15,7 +15,7 @@ struct OxygenContentInformationPage: View {
                                 OxygenContentCaseStudy()
             }
         }
-        .applyCalculationToolBar(title: "Oxygen Content", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Oxygen Content", destination: InfoButtonView(destination: Sources()))
     }
 }
 #Preview {

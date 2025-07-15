@@ -16,7 +16,7 @@ struct ComplianceInformationPage: View {
                 
             }
         }
-        .applyCalculationToolBar(title: "Compliance", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Compliance", destination: InfoButtonView(destination: Sources()))
     }
 }
 

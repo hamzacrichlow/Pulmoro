@@ -115,7 +115,7 @@ Lower lung compliance means the lungs are stiffer, requiring more effort to expa
 """, infopage: ComplianceInformationPage())
             }
         }
-        .applyCalculationToolBar(title: "Compliance", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Compliance", destination: InfoButtonView(destination: Sources()))
     }
 }
 

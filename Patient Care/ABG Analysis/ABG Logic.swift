@@ -10,9 +10,16 @@ func reccomendVentSettings(VT: Double?, PC: Double?, PS: Double?, RR: Double?, F
     
 
 }
+struct ABGResult {
+    let acidBaseStatus: String
+    let compensationStatus: String
+    let oxygenationStatus: String
+    let anionGapNote: String
+    let conditionLabel: String
+}
 
 ///ABG Interpretator
-func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO2: Double?) -> (String, String, String, String, String) {
+func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO2: Double?) -> ABGResult {
     
     var pHInterpretation: String = ""
     var oxygenationInterpretation: String = ""
@@ -24,7 +31,13 @@ func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO
     let upperOxygenationRange =  normalOxygenationRange(FiO2: FiO2 ?? 21).1
     
     guard let pH = pH, let paCO2 = paCO2, let HCO3 = HCO3 else {
-        return ("", "", "", "", "")
+        return ABGResult(
+            acidBaseStatus: "Insufficient Data",
+            compensationStatus: "Insufficient Data",
+            oxygenationStatus: "Insufficient Data",
+            anionGapNote: "N/A",
+            conditionLabel: "N/A"
+        )
     }
     switch (pH, paCO2, HCO3) {
     case let(pH, paCO2, HCO3) where pH < 7.35 && paCO2 <= 45 && HCO3 < 22:
@@ -54,33 +67,6 @@ func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO
     }
     
     switch (pH, paCO2, HCO3) {
-    case let (pH, paCO2, HCO3) where pH < 7.35 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
-        pHInterpretation = "ABG Gross Error Acidosis"
-        condition = "ABG Gross Error Acidosis"
-        
-    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
-        pHInterpretation = "ABG Gross Error Alkalosis"
-        condition = "ABG Gross Error Alkalosis"
-        
-    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && (paCO2 < 35 || paCO2 > 45) && HCO3 <= 26 && HCO3 >= 22:
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-        
-    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && paCO2 >= 35 && paCO2 <= 45 && (HCO3 > 26 || HCO3 < 22):
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-    
-    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 > 45 || HCO3 < 22:
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-        
-    case let (pH, paCO2, HCO3) where pH < 7.35 && (paCO2 < 35 || HCO3 > 28):
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
-        //Handle Extremes
-    case let (pH, paCO2, HCO3) where pH < 6.6 || pH > 7.7 || paCO2 > 90 || paCO2 < 5 || HCO3 > 60 || HCO3 < 2:
-        pHInterpretation = "ABG Gross Error"
-        condition = "ABG Gross Error"
     case let (pH, paCO2, HCO3) where pH < 7.35 && paCO2 > 45 && HCO3 >= 22 && HCO3 <= 26:
         pHInterpretation = "Uncompensated Respiratory Acidosis"
         
@@ -128,6 +114,33 @@ func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO
         
     case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 < 35 && HCO3 > 26:
         pHInterpretation = "Mixed (Combined) Alkalosis"
+    case let (pH, paCO2, HCO3) where pH < 7.35 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
+        pHInterpretation = "ABG Gross Error Acidosis"
+        condition = "ABG Gross Error Acidosis"
+        
+    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 >= 35 && paCO2 <= 45 && HCO3 >= 22 && HCO3 <= 26:
+        pHInterpretation = "ABG Gross Error Alkalosis"
+        condition = "ABG Gross Error Alkalosis"
+        
+    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && (paCO2 < 35 || paCO2 > 45) || (HCO3 <= 26 && HCO3 >= 22):
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+        
+    case let (pH, paCO2, HCO3) where pH >= 7.35 && pH <= 7.45 && paCO2 >= 35 && paCO2 <= 45 && (HCO3 > 26 || HCO3 < 22):
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+    
+    case let (pH, paCO2, HCO3) where pH > 7.45 && paCO2 > 45 || HCO3 < 22:
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+        
+    case let (pH, paCO2, HCO3) where pH < 7.35 && (paCO2 < 35 || HCO3 > 28):
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
+        //Handle Extremes
+    case let (pH, paCO2, HCO3) where pH < 6.6 || pH > 7.7 || paCO2 > 90 || paCO2 < 5 || HCO3 > 60 || HCO3 < 2:
+        pHInterpretation = "ABG Gross Error"
+        condition = "ABG Gross Error"
         
   
         
@@ -158,7 +171,13 @@ func interpretABG(pH: Double?, paCO2: Double?, HCO3: Double?, PaO2: Double?, FiO
         }
     }
     
-    return (acuteOrChronic, pHInterpretation, oxygenationInterpretation, anionGap, condition)
+    return ABGResult(
+        acidBaseStatus: pHInterpretation,
+            compensationStatus: acuteOrChronic,
+            oxygenationStatus: oxygenationInterpretation,
+            anionGapNote: anionGap,
+            conditionLabel: condition
+    )
 }
 
 

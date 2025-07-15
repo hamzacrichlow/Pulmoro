@@ -9,13 +9,23 @@ import SwiftUI
 
 @main
 struct PulmoroApp: App{
-
-
+  
+    
+    
+    @State private var gradientColors: [Color] = [
+        Color(.cyan).opacity(0.1),
+        Color(.cyan).opacity(0.2),
+        Color(.cyan).opacity(0.1)
+    ]
+    
+    
     var body: some Scene {
         WindowGroup {
             TabBar()
-                .preferredColorScheme(.dark)
+                .background( MovingGradientView(colors: gradientColors)
+                    .ignoresSafeArea())
         }
+        
     }
 }
 

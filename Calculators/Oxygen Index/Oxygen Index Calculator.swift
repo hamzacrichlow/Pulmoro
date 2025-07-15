@@ -69,7 +69,7 @@ struct OxygenIndexCalculator: View {
                                  OI > 40: ARDS, Severe hypoxemia (indicates a critical situation with potential need for mechanical ventilation or ECMO)
                                  """, infopage: OxygenIndexInformationPage())
             }
-        } .applyCalculationToolBar(title: "Oxygen Index", destination: InfoButtonView())
+        } .applyCalculationToolBar(title: "Oxygen Index", destination: InfoButtonView(destination: Sources()))
     }
 }
 

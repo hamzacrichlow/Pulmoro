@@ -15,7 +15,7 @@ struct OxygenTankDurationInformationPage: View {
                                 OxygenTankCaseStudy()
             }
         }
-        .applyCalculationToolBar(title: "Oxygen Tank Duration", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Oxygen Tank Duration", destination: InfoButtonView(destination: Sources()))
     }
 }
 

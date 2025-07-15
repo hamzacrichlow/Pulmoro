@@ -113,7 +113,7 @@ struct OxygenContentCalculator: View {
                                  """, infopage: OxygenContentInformationPage())
             }
         }
-        .applyCalculationToolBar(title: "Oxygen Content", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Oxygen Content", destination: InfoButtonView(destination: Sources()))
     }
 }
 

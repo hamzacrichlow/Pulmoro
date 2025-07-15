@@ -53,7 +53,7 @@ struct CarePlan: View {
                     BackButton(systemImage: "chevron.backward")
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                               InfoButtonView()
+                    InfoButtonView(destination: Sources())
                           }
             }
         }

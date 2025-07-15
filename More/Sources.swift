@@ -12,19 +12,10 @@ struct Sources: View {
     var body: some View {
         NavigationStack{
             ScrollView{
-                
-               
                     VStack{
-                        Text("Pulmoro")
-                            .font(.largeTitle)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                        
-                            .padding(20)
-                            .padding(.bottom, -30)
                         Text("""
-                            Pulmoro is a specialized tool designed to assist medical professionals in managing patients with respiratory conditions, particularly those requiring mechanical ventilation support. It supports clinical practice by providing quick and accurate recommendations and calculations that minimize medical errors.
+                            Pulmoro is a specialized clinical decision tool designed to assist medical professionals in managing patients with respiratory conditions, particularly those requiring mechanical ventilation support. Pulmoro supports clinical practice by providing quick and accurate recommendations that minimize medical errors.
                             """)
-                        
                         .font(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(20)
@@ -167,10 +158,10 @@ struct Sources: View {
                 
                 
             }
-            .navigationBarTitle("About Pulmoro", displayMode: .inline)
+            .navigationBarTitle("About Pulmoro", displayMode: .automatic)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    BackButton(systemImage: "x.circle")
+                ToolbarItem(placement: .navigationBarLeading) {
+                    BackButton(systemImage: "chevron.left")
                 }
             }
             

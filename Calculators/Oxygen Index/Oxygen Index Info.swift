@@ -15,7 +15,7 @@ struct OxygenIndexInformationPage: View {
                                 OxygenIndexCaseStudy()
             }
         }
-        .applyCalculationToolBar(title: "Oxygen Index", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Oxygen Index", destination: InfoButtonView(destination: Sources()))
     }
 }
 

@@ -66,7 +66,7 @@ struct TidalVolumeCalculation: View {
                     infopage: TidalVolumeInformationPage())
             }
         }
-        .applyCalculationToolBar(title: "Tidal Volume", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Tidal Volume", destination: InfoButtonView(destination: Sources()))
     }
     
 }

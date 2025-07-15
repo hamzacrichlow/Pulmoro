@@ -198,7 +198,7 @@ struct Views: View {
                                   description: "Patient-specific warnings, potential complications, and contraindications based on current clinical status.")
             }
         }
-            .applyCalculationToolBar(title: "Care Plan", destination: InfoButtonView())
+            .applyCalculationToolBar(title: "Care Plan", destination: InfoButtonView(destination: Sources()))
     }
 }
 }
@@ -243,7 +243,7 @@ struct ClickableGroupBox<Destination: View, Content: View>: View {
          description: String) where Content == EmptyView {
         self.title = title
         self.icon = icon
-        self.info = nil  // Set to nil since it's not provided
+        self.info = nil 
         self.destination = destination
         self.description = description
         self.content = nil
@@ -359,36 +359,39 @@ struct VentAdjustmentCardInfo: View {
         }
     }
 }
-#Preview {
-    // Create a preview data instance
-    let previewData = PatientData()
-    
-    // Set up ABG preview data with reasonable values
-    previewData.ABGClass.pH = 7.30
-    previewData.ABGClass.paCO2 = 40
-    previewData.ABGClass.HCO3 = 18
-    previewData.ABGClass.paO2 = 40
-    previewData.ABGClass.saO2 = 95
-    previewData.ABGClass.BE = 0
-    
-    // Set up VentSettings preview data
-    previewData.VentSettingsClass.VT = 500
-    previewData.VentSettingsClass.RR = 12
-    previewData.VentSettingsClass.FiO₂ = 40
-    previewData.VentSettingsClass.PEEP = 5
-    previewData.VentSettingsClass.IT = 1.0
-    previewData.VentSettingsClass.IE = 1.2
-    previewData.VentSettingsClass.ventilationMode = "VC/AC"
-    previewData.VentSettingsClass.ventilationType = "Invasive"
-    
-    // Return the Views with constant bindings for preview
-    return Views(
-           ABGData: .constant(previewData.ABGClass),
-           VentData: .constant(previewData.VentSettingsClass),
-           VentParameters: .constant(previewData.VentParametersClass) // Add this line
-       )
-}
+//#Preview {
+//    // Create a preview data instance
+//    let previewData = PatientData()
+//    
+//    // Set up ABG preview data with reasonable values
+//    previewData.ABGClass.pH = 7.30
+//    previewData.ABGClass.paCO2 = 40
+//    previewData.ABGClass.HCO3 = 18
+//    previewData.ABGClass.paO2 = 40
+//    previewData.ABGClass.saO2 = 95
+//    previewData.ABGClass.BE = 0
+//    
+//    // Set up VentSettings preview data
+//    previewData.VentSettingsClass.VT = 500
+//    previewData.VentSettingsClass.RR = 12
+//    previewData.VentSettingsClass.FiO₂ = 40
+//    previewData.VentSettingsClass.PEEP = 5
+//    previewData.VentSettingsClass.IT = 1.0
+//    previewData.VentSettingsClass.IE = 1.2
+//    previewData.VentSettingsClass.ventilationMode = "VC/AC"
+//    previewData.VentSettingsClass.ventilationType = "Invasive"
+//    
+//    // Return the Views with constant bindings for preview
+//    return Views(
+//           ABGData: .constant(previewData.ABGClass),
+//           VentData: .constant(previewData.VentSettingsClass),
+//           VentParameters: .constant(previewData.VentParametersClass) // Add this line
+//       )
+//}
 
+#Preview{
+    TabBar()
+}
 
 struct TabBar: View {
     
@@ -398,16 +401,16 @@ struct TabBar: View {
         
         TabView(selection: $selectedTab)
         {
-            VentSim()
-                .tabItem {
-                    Image(systemName: "lungs.fill")
-                    Text("Simulator")
-                }
+//            VentSim()
+//                .tabItem {
+//                    Image(systemName: "lungs.fill")
+//                    Text("Simulator")
+//                }
          
-            PatientCare()
+            ABGAnalysis()
                 .tabItem{
-                    Image(systemName: "cross.fill")
-                    Text("Patient Care")
+                    Image(systemName: "syringe.fill")
+                    Text("ABG Analysis")
                 }
                 .tag(0)
             Calculations()
@@ -460,6 +463,7 @@ struct CalculationToolBarViewModifier<Destination: View>: ViewModifier {
         content
             .navigationBarBackButtonHidden(true)
             .navigationBarTitle(title, displayMode: .automatic)
+            .minimumScaleFactor(0.1)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     destination
@@ -632,10 +636,10 @@ struct NewPageButtonView<Content: View>: View {
     var body: some View {
         NavigationLink(destination: destination)
         {
-            HStack{
+           
                 Text(text)
-                Image(systemName: icon)
-            }
+       
+            
         }
         .buttonStyle(CustomButtonStyle())
     }
@@ -653,13 +657,18 @@ struct ImportantInfoBox<Content: View>: View {
             Text(ImportantInformation)
             .font(.system(size: 15))
             .padding(10)
-            
-            NewPageButtonView(
-                text: "More Information",
-                icon: "",
-                destination: infopage
-            )
-            
+            VStack(spacing: 10){
+                NewPageButtonView(
+                    text: "How to Calculate?",
+                    icon: "",
+                    destination: infopage
+                )
+                NewPageButtonView(
+                    text: "View Case Study",
+                    icon: "",
+                    destination: AaGradientCalculationCaseStudy()
+                )
+            }
             
         }
         .customGroupBoxStyle()
@@ -1071,11 +1080,12 @@ struct CaseStudyAnswerView: View {
     }
 }
 
-struct InfoButtonView: View {
+struct InfoButtonView <Content: View>: View {
     
     @State private var showSheet: Bool = false
-    
+    var destination: Content
     var body: some View {
+        
         Button(action: {
             showSheet.toggle()
         }) {
@@ -1094,8 +1104,11 @@ struct InfoButtonView: View {
                 )
         }
         .sheet(isPresented: $showSheet) {
-            Sources()
+           destination
+                .presentationDragIndicator(.visible)
                 .presentationDetents([.large])
+                .presentationCornerRadius(20)
+           
         }
         .padding()
         
@@ -1213,23 +1226,60 @@ struct mlPerKgPicker: View {
 
 
 struct CustomButtonStyle: ButtonStyle {
+    
+    @Environment(\.colorScheme) var colorScheme
+    
     func makeBody(configuration: Configuration) -> some View {
-     configuration.label
-        .font(.system(size: 15, weight: .semibold))
-        .frame(width: 175)
-        .foregroundStyle(Color.white)
-        .padding(10)
-        .background(LinearGradient(gradient: .init(colors: [.blue, .teal]), startPoint: .leading, endPoint: .trailing))
-        .cornerRadius(15)
-        .shadow(radius: 2)
-        .padding(.top, 10)
+        configuration.label
+            .font(.system(size: 17, weight: .bold))
+            .bold()
+            .lineLimit(1)
+            .padding(.horizontal)
+            .frame(width: 200)
+            .padding(.vertical, 5)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(colorScheme == .dark ? Color.white : Color.black)
+            .padding(10)
+            .background(.regularMaterial)
+            .cornerRadius(30)
+            .shadow(color:.black.opacity(0.1),radius: 5, x: 1 , y: 1)
+//            .background(
+//                LinearGradient(
+//                    gradient: colorScheme == .dark ? Gradient(colors: [.cyan,.blue]) : Gradient(colors: [.cyan.opacity(0.8), .cyan, .cyan.opacity(0.8)]),
+//                    startPoint: .topLeading,
+//                    endPoint: .bottomTrailing
+////                    gradient: colorScheme == .dark ? Gradient(colors: [.cyan.opacity(0.8), .cyan, .cyan.opacity(0.8)]) : Gradient(colors: [.cyan, .blue, .cyan]),
+////                    startPoint: .topLeading,
+////                    endPoint: .bottomTrailing
+//                )
+//            )
+//            .cornerRadius(15)
+            .overlay(
+                RoundedRectangle(cornerRadius: 30)
+                    .stroke((colorScheme == .dark ? Color.cyan : Color.cyan).opacity(0.3), lineWidth: 3)
+            )
+            .shadow(color:.black.opacity(0.2),radius: 1, x: 1 , y: 1)
+            .overlay(
+                RoundedRectangle(cornerRadius: 30)
+                    .fill(
+                        LinearGradient(
+                            gradient: colorScheme == .dark ? Gradient(colors: [.black.opacity(0.1), .clear,.black.opacity(0.1)]) : Gradient (colors: [.white.opacity(0.5),.clear, .clear, .clear, .white.opacity(0.2)]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .padding(2)
+            )
+            .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
+            .padding(.top, 10)
     }
 }
+
 
 struct AcidBaseBalanceInstructionsView: View {
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Enter your patient's information and ABG results to receive ABG interpretations and treatment recommendations.")
+            Text("Enter your patient's information and ABG results to receive an ABG interpretation and treatment recommendations.")
         }
         .padding()
     }
@@ -1249,12 +1299,7 @@ struct AboutPulmoroPage: View {
         ScrollView{
             
             
-        Text("Pulmoro")
-            .font(.largeTitle)
-            .bold()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(20)
-            .padding(.bottom, -30)
+  
             Divider()
                 .frame(width: 370)
                 .frame(height: 3)
@@ -1368,7 +1413,7 @@ struct AboutPulmoroPage: View {
             .padding()
     }
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitle("More Information", displayMode: .inline)
+        .navigationBarTitle("About Pulmoro", displayMode: .automatic)
         .toolbar {
            
             ToolbarItem(placement: .navigationBarLeading) {
@@ -1381,12 +1426,7 @@ struct AboutPulmoroPage: View {
 struct AboutABGAnalysis: View {
     var body: some View {
         ScrollView{
-        Text("Arterial Blood Gas Analysis")
-            .font(.largeTitle)
-            .bold()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(20)
-            .padding(.bottom, -30)
+       
             Divider()
                 .frame(width: 370)
                 .frame(height: 3)
@@ -1408,7 +1448,7 @@ struct AboutABGAnalysis: View {
                 .padding()
     }
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitle("More Information", displayMode: .inline)
+        .navigationBarTitle("Arterial Blood Gas Analysis", displayMode: .automatic)
         .toolbar {
            
             ToolbarItem(placement: .navigationBarLeading) {
@@ -1639,6 +1679,8 @@ struct InputField: View {
         HStack{
             Text(label)
                 .frame(width: 75, alignment: .center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.1)
             ZStack{
                 //This is the textfield
                 TextField("", text: $text)
@@ -1704,3 +1746,64 @@ struct BiggerInputField: View {
         }
     }
 }
+
+struct NavigationBox<Content: View>: View {
+    var destination: Content
+var systemImage: String
+    var title: String
+    var description: String
+    var body: some View {
+        NavigationLink(destination: destination) {
+            GroupBox {
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("\(Image(systemName: systemImage))  \(title)")
+                            .font(.title)
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+
+                        
+                    }
+                    Divider()
+                        .frame(height: 1)
+                        .overlay(LinearGradient(gradient: .init(colors: [.teal, .blue]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .padding(.bottom, 5)
+                    Text(description)
+                    .font(.body)
+                }
+                
+            }
+            .customGroupBoxStyle3()
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct CustomGroupBoxStyle3: ViewModifier {
+ 
+    func body(content: Content) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.5), radius: 1, x: 0.5, y: 0.5)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10)
+            content
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+}
+
+extension View {
+    func customGroupBoxStyle3(backgroundColor: Color = Color(.systemBackground)) -> some View {
+        self.modifier(CustomGroupBoxStyle3())
+        
+    }
+}
+

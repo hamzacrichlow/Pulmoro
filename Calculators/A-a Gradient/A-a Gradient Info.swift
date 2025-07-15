@@ -15,7 +15,7 @@ struct AaGradientInformation: View {
         AaGradientCalculationCaseStudy()
             }
         }
-        .applyCalculationToolBar(title: "A-a Gradient", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "A-a Gradient", destination: InfoButtonView(destination: Sources()))
     }
 }
 

@@ -82,7 +82,7 @@ Carry a backup oxygen source and be prepared to manage any equipment malfunction
 """, infopage: OxygenTankDurationInformationPage())
             }
             
-        }.applyCalculationToolBar(title: "Oxygen Tank Duration", destination: InfoButtonView())
+        }.applyCalculationToolBar(title: "Oxygen Tank Duration", destination: InfoButtonView(destination: Sources()))
     }
 }
 

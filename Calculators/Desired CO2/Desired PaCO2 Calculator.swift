@@ -126,7 +126,7 @@ struct DesiredCO2Calculator: View {
                                  """, infopage: DesiredCO2InformationPage())
             }
         }
-        .applyCalculationToolBar(title: "Desired PaCO₂", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "Desired PaCO₂", destination: InfoButtonView(destination: Sources()))
     }
 }
 

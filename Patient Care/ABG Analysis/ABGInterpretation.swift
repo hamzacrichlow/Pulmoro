@@ -86,7 +86,7 @@ struct ABGAnalysis: View {
                    
                     
                     NavigationLink(destination: ABGInterpretationSheet(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass)) {
-                                              Text("ABG Interpretation")
+                                              Text("Interpret ABG")
                                           }
                                           .buttonStyle(CustomButtonStyle())
                 }
@@ -96,9 +96,9 @@ struct ABGAnalysis: View {
             .navigationBarTitle("ABG Analysis", displayMode: .automatic)
             .toolbar {
                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    BackButton(systemImage: "chevron.backward")
-                }
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    BackButton(systemImage: "chevron.backward")
+//                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                                InfoButtonView2(content: ABGAnalysisPopUp())
                           }
@@ -129,15 +129,13 @@ struct ABGInterpretationSheet: View {
             FiO2: VentData.FiO₂
         )
         
-        // Define hasGrossError to check for ABG Gross Error in any of the interpretation results
-        let hasGrossError = interpretation.1.contains("ABG Gross Error") || interpretation.4.contains("ABG Gross Error")
-        
-        
-        let everythingIsNormal = interpretation.1.contains("Normal Acid-Base Status") && interpretation.2.contains("Normal Oxygenation")
+        let hasGrossError = interpretation.acidBaseStatus.contains("ABG Gross Error") || interpretation.conditionLabel.contains("ABG Gross Error")
+        let everythingIsNormal = interpretation.acidBaseStatus.contains("Normal Acid-Base Status") && interpretation.oxygenationStatus.contains("Normal Oxygenation")
+
         
         ZStack {
-            MovingGradientView(colors: gradientColors)
-                .ignoresSafeArea(.all)
+//            MovingGradientView(colors: gradientColors)
+//                .ignoresSafeArea(.all)
                 
             ScrollView {
                 // ABG Group Box
@@ -173,7 +171,7 @@ struct ABGInterpretationSheet: View {
                                 .foregroundStyle(.red)
                         } else {
                             // Show normal interpretation results
-                            if interpretation.1.isEmpty {
+                            if interpretation.acidBaseStatus.isEmpty {
                                 HStack {
                                     Image(systemName: "waveform.path.ecg")
                                         .foregroundStyle(.red)
@@ -184,13 +182,13 @@ struct ABGInterpretationSheet: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.bottom, 5)
                             } else {
-                                Text(interpretation.1)
+                                Text(interpretation.acidBaseStatus)
                                     .font(.title2)
                                     .padding(.bottom, 2)
                             }
                             
                             // Oxygenation status - only shown if no gross error
-                            if interpretation.2.isEmpty {
+                            if interpretation.oxygenationStatus.isEmpty {
                                 HStack {
                                     Image(systemName: "waveform.path.ecg")
                                         .foregroundStyle(.red)
@@ -200,7 +198,7 @@ struct ABGInterpretationSheet: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             } else {
-                                Text("with \(interpretation.2)")
+                                Text("with \(interpretation.oxygenationStatus)")
                                     .font(.title2)
                             }
                         }
@@ -218,8 +216,8 @@ struct ABGInterpretationSheet: View {
                 // Only display interpretation and treatment sections if there's NO gross error
                     VStack {
                         // Acid-base interpretation section
-                        if !interpretation.4.isEmpty {
-                            if let abgInterpretation = ABGInterpretations[interpretation.4] {
+                        if !interpretation.conditionLabel.isEmpty {
+                            if let abgInterpretation = ABGInterpretations[interpretation.conditionLabel] {
                                 if let description = abgInterpretation.description {
                                     VStack {
 //                                        Text("Interpretation & Treatment")
@@ -261,8 +259,8 @@ struct ABGInterpretationSheet: View {
                         }
                         
                         // Oxygenation interpretation section
-                        if !interpretation.2.isEmpty {
-                            if let o2Interpretation = o2Interpretations[interpretation.2] {
+                        if !interpretation.oxygenationStatus.isEmpty {
+                            if let o2Interpretation = o2Interpretations[interpretation.oxygenationStatus] {
                                 if let oxygenationInterpretation = o2Interpretation.oxygenationInterpretation {
                                     VStack {
                                         Text("Oxygenation Status")

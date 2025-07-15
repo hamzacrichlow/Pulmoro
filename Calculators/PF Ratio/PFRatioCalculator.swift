@@ -61,7 +61,7 @@ struct PFRatioCalculator: View {
                     infopage: TidalVolumeInformationPage())
             }
         }
-        .applyCalculationToolBar(title: "P/F Ratio", destination: InfoButtonView())
+        .applyCalculationToolBar(title: "P/F Ratio", destination: InfoButtonView(destination: Sources()))
     }
     
 }

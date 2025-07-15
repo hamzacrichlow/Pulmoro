@@ -14,7 +14,7 @@ struct OxygenContentInformation: View {
         CalculationInformationPage(
             calculationName: "Oxygen Content",
             calculation: "CaO₂ = (Hb x 1.34 x SaO₂) + (PaO₂ x 0.003)",
-            calculationDefinition: "",
+            calculationDefinition: "Oxygen Content is the total amount of oxygen carried in arterial blood.",
             importanceOfCalculation: """
               If hemoglobin concentration, arterial saturation or PaO2 decrease then CaO2 decreases .
                  The effectiveness of increased FiO₂ in the management of hypoxemia depends on the cause of hypoxemia. Hypoxemia caused by a decrease in V/Q Ratio or hypoventilation is more responsive to increased FiO2 than hypoxemia caused by a diffusion defect or shunt. Diffusion deficits and shunts usually respond better to pressure o a n increase in PEEP.IF PaO2 responds well to an increased in FiO2 then a low VQ ratio is probably the cause of hypoxemia. If the patient is not responding well to high amounts of FiO2 on the vent then that is likely meaning that the cause of hypoxemia is
@@ -30,7 +30,7 @@ struct OxygenContentInformation: View {
 }
 
 #Preview {
-    OxygenContentCaseStudy()
+    OxygenContentInformation()
 }
 
 struct OxygenContentCaseStudy: View {

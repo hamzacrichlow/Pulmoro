@@ -7,67 +7,65 @@
 
 import SwiftUI
 
+/// A calculator view for determining a patient's anion gap.
+///
+/// This calculator uses sodium (Na⁺), potassium (K⁺), chloride (Cl⁻), and bicarbonate (HCO₃⁻)
+/// levels to estimate the anion gap, which reflects acid-base balance in the blood.
+///
+/// The formula used:
+/// ```
+/// Anion Gap = Na⁺ + K⁺ − (Cl⁻ + HCO₃⁻)
+/// ```
+///
+/// A typical reference range is 8–12 mEq/L, and deviations may suggest metabolic disorders.
+///
+/// - Important: This view uses the reusable `CalculatorView` structure to simplify layout
+///   and ensure consistency with other calculators in the app.
+///
+/// ### UI Elements
+/// - Input fields: Na⁺, K⁺, Cl⁻, HCO₃⁻
+/// - Result: Displays calculated anion gap in mEq/L
+/// - Info Section: Provides context and clinical interpretation
+///
+/// - SeeAlso: `CalculatorView`, `CalculatorInput`, `calculateAnionGap`
 struct AnionGapCalculator: View {
-    
-    @State private var Cl: Double = 0
-    @State private var K: Double = 0
     @State private var Na: Double = 0
+    @State private var K: Double = 0
+    @State private var Cl: Double = 0
     @State private var HCO3: Double = 0
-    
-    @State private var anionGap: Double? = nil
-    
+    @State private var result: Double?
 
     var body: some View {
-        
-        ScrollView{
-            
-            VStack {
-                GroupBox(label: Label("Anion Gap Calculator", systemImage: "lungs.fill")){
-                    VStack{
-                        
-                        CalculatorInstructions(instructions: "Enter the patient's Na, K, Cl, and HCO3 to calculate the anion gap.")
-                        HStack{
-                        VStack{
-                            InputField(label: "Na +", units: "mEq/L", value: $Na)
-                            InputField(label: "K +", units: "mEq/L", value: $K)
-                        }
-                        VStack{
-                            InputField(label: "Cl -", units: "mEq/L", value: $Cl)
-                            InputField(label: "HCO3 -", units: "mEq/L", value: $HCO3)
-                        }
-                    }
-                        Button(action: {
-                            anionGap = calculateAnionGap(Na: Na, K: K, Cl: Cl, HCO3: HCO3)
-                        },
-                               label: {
-                            Text("Calculate")
-                        })
-                        .buttonStyle(CustomButtonStyle())
-//                        .disabled(!isFormValid)
-//                        .disabled(!isFormValid)
-                        if let anionGap = anionGap {
-                            AnswerView(value: anionGap, unit: "mEq/L")
-                        }
-                    }
+        CalculatorView(
+            title: "Anion Gap",
+            systemImage: "lungs.fill",
+            instructions: "Enter the patient's Na, K, Cl, and HCO₃ to calculate the anion gap.",
+            inputs: [
+                CalculatorInput(label: "Na +", units: "mEq/L", binding: $Na, size: .standard),
+                CalculatorInput(label: "K +", units: "mEq/L", binding: $K, size: .standard),
+                CalculatorInput(label: "Cl -", units: "mEq/L", binding: $Cl, size: .standard),
+                CalculatorInput(label: "HCO₃ -", units: "mEq/L", binding: $HCO3, size: .standard)
+            ],
+            calculateAction: {
+                result = calculateAnionGap(Na: Na, K: K, Cl: Cl, HCO3: HCO3)
+            },
+            outputView: Group {
+                if let result = result {
+                    AnswerView(value: result, unit: "mEq/L")
                 }
-                .customGroupBoxStyle()
-               
-                
-                ImportantInfoBox(ImportantInformation: ("""
-                            The anion gap is a calculation used to assess the balance of electrolytes in the blood, specifically the difference between positively and negatively charged electrolytes.
-                            
-                            The normal anion gap range can vary slightly but it's generally considered to be around 8-12 mEq/L
-                            
-                            Elevated Anion Gap: May indicate metabolic acidosis, where the blood is too acidic.
-                            
-                            Low Anion Gap: May indicate certain conditions, such as hyperchloremia (high chloride levels). 
-                            """),
-                    infopage: TidalVolumeInformationPage())
-            }
-        }
-        .applyCalculationToolBar(title: "Anion Gap", destination: InfoButtonView())
+            },
+            info: """
+The anion gap is a calculation used to assess the difference between positively and negatively charged electrolytes in the blood.
+
+The normal anion gap range can vary slightly but it's generally considered to be around 8-12 mEq/L
+
+Elevated anion gap maay indicate metabolic acidosis.
+
+Decreased anion gap may indicate certain conditions, such as hyperchloremia. 
+""",
+            infoPage: AnyView(AnionGapInformation())
+        )
     }
-    
 }
 
 #Preview {
