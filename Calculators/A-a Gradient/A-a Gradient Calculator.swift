@@ -21,7 +21,17 @@ struct AaGradientCalculator: View {
     @State private var AaGradient: Double? = nil
     @State private var lungIssueDescription: String?
     
+    
+    @State private var gradientColors: [Color] = [
+        Color(.cyan).opacity(0.1),
+        Color(.cyan).opacity(0.2),
+        Color(.cyan).opacity(0.1)
+    ]
+    
     var body: some View {
+        ZStack{
+            MovingGradientView(colors: gradientColors)
+                .ignoresSafeArea(.all)
         CalculatorView(
             title: "A-a Gradient Calculator",
             systemImage: "lungs.fill",
@@ -41,30 +51,31 @@ struct AaGradientCalculator: View {
                     lungIssueDescription = intrinsicOrExtrinsic(age: age, AaGradient: AaGradient, NormalAaGradient: normalAaGradient)
                 }
             },
-                outputView: Group{
-                    if let AaGradient = AaGradient {
-                        AnswerView(value:AaGradient, unit: "mmHg" )
-                            .padding(5)
-                    }
-                    if let lungIssueDescription = lungIssueDescription {
-                        
-                        Text(lungIssueDescription)
-                            .font(.caption)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .transition(.scale)
-                            .animation(.easeInOut(duration: 0.5), value: lungIssueDescription)
-                            .padding(5)
-                    }
-                },
+            outputView: Group{
+                if let AaGradient = AaGradient {
+                    AnswerView(value:AaGradient, unit: "mmHg" )
+                        .padding(5)
+                }
+                if let lungIssueDescription = lungIssueDescription {
+                    
+                    Text(lungIssueDescription)
+                        .font(.caption)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .transition(.scale)
+                        .animation(.easeInOut(duration: 0.5), value: lungIssueDescription)
+                        .padding(5)
+                }
+            },
             info: """
                 The A-a gradient is a useful measurement of the efficiency of gas exchange. It can be used to differentiate between intrinsic and extrinsic causes of hypoxemia.
-
+                
                 An elevated A-a gradient can indicate hypoxemia caused by an intrinsic lung issue associated with gas exchange problems. The greater the gradient, the more severe the impairment in gas exchange.
-
+                
                 If the A-a gradient is within the normal range and the patient is hypoxic, the hypoxemia is likely caused by an extrinsic factor rather than intrinsic.
                 """,
             infoPage: AnyView(AaGradientInformation())
-                )
+        )
+    }
 
     }
 }

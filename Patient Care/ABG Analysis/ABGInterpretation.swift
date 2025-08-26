@@ -9,6 +9,7 @@ import SwiftUI
 
 
 
+/// The UI for inputing a patients ABG reslults
 struct ABGView: View {
     @Binding var ABGData: ABG
     var body: some View {
@@ -56,10 +57,11 @@ struct ABGView: View {
 
 
 
+/// This is the ABG Analysis page UI for the user to input the patients information and ABG. It consist of the "ABG interpretation button that navigates the user to the page displaying the ABG intepretation and treatment"
 struct ABGAnalysis: View {
     
     @StateObject var patientData = PatientData()
-   
+    
     @State private var gradientColors: [Color] = [
         Color(.cyan).opacity(0.1),
         Color(.cyan).opacity(0.2),
@@ -71,42 +73,39 @@ struct ABGAnalysis: View {
             ZStack{
                 MovingGradientView(colors: gradientColors)
                     .ignoresSafeArea(edges: .all)
-            ScrollView{
-           
-                VStack{
-                    AcidBaseBalanceInstructionsView()
-                   
-                    PatientInformationView(PatientInformationData: $patientData.PatientInformatioinClass)
-                   
+                ScrollView{
                     
+                    VStack{
+                        AcidBaseBalanceInstructionsView()
+                        
+                        PatientInformationView(PatientInformationData: $patientData.PatientInformatioinClass)
+                        
+                        ABGView(ABGData: $patientData.ABGClass)
+                        
+                        NavigationLink(destination: ABGInterpretationSheet(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass)) {
+                            Text("Interpret ABG")
+                        }
+                        .buttonStyle(CustomButtonStyle())
+                        .sensoryFeedback(.impact(weight: .medium), trigger: UUID())
+                        
+                    }
                     
-                    
-                    ABGView(ABGData: $patientData.ABGClass)
-                    
-                   
-                    
-                    NavigationLink(destination: ABGInterpretationSheet(ABGData: $patientData.ABGClass, VentData: $patientData.VentSettingsClass)) {
-                                              Text("Interpret ABG")
-                                          }
-                                          .buttonStyle(CustomButtonStyle())
                 }
-                
+                .navigationBarBackButtonHidden(true)
+                .navigationBarTitle("ABG Analysis", displayMode: .automatic)
+                .toolbar {
+                    
+                    //                ToolbarItem(placement: .navigationBarLeading) {
+                    //                    BackButton(systemImage: "chevron.backward")
+                    //                }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        InfoButtonView2(content: ABGAnalysisPopUp())
+                    }
+                }
             }
-            .navigationBarBackButtonHidden(true)
-            .navigationBarTitle("ABG Analysis", displayMode: .automatic)
-            .toolbar {
-               
-//                ToolbarItem(placement: .navigationBarLeading) {
-//                    BackButton(systemImage: "chevron.backward")
-//                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                               InfoButtonView2(content: ABGAnalysisPopUp())
-                          }
-            }
-            }
-        }
         }
     }
+}
 
 struct ABGInterpretationSheet: View {
     
@@ -134,15 +133,55 @@ struct ABGInterpretationSheet: View {
 
         
         ZStack {
-//            MovingGradientView(colors: gradientColors)
-//                .ignoresSafeArea(.all)
+            MovingGradientView(colors: gradientColors)
+                .ignoresSafeArea(.all)
                 
             ScrollView {
                 // ABG Group Box
                 GroupBox(label: Label("Arterial Blood Gas", systemImage: "syringe.fill")) {
                     VStack {
                         
+                        // Display logic for interpretation results
+                        if everythingIsNormal {
+                            Text("Normal Acid-Base Balance with Normal Oxygenation")
+                        } else if hasGrossError {
+                            // Only show Gross Error message
+                            Text("ABG Gross Error")
+                                .font(.title2)
+                                .bold()
+                                .padding()
+                                .foregroundStyle(.red)
+                        } else {
+                            let acidBase = interpretation.acidBaseStatus
+                            let oxygenation = interpretation.oxygenationStatus
+
+                            if acidBase == "Insufficient Data" && oxygenation == "Insufficient Data" {
+                                // Only show once
+                                Text("Insufficient Data")
+                                    .font(.title2)
+                                    .foregroundStyle(.red)
+                            } else {
+                                if !acidBase.isEmpty && acidBase != "Insufficient Data" {
+                                    Text(acidBase)
+                                        .font(.title2)
+                                        .padding(.bottom, 2)
+                                }
+                                if !oxygenation.isEmpty && oxygenation != "Insufficient Data" {
+                                    Text("with \(oxygenation)")
+                                        .font(.title2)
+                                }
+                                if (acidBase == "Insufficient Data" && oxygenation != "Insufficient Data") ||
+                                   (oxygenation == "Insufficient Data" && acidBase != "Insufficient Data") {
+                                    Text("Insufficient Data")
+                                        .font(.title2)
+                                        .foregroundStyle(.red)
+                                }
+                            }
+                        }
+
+                        
                         // Display diagnostic values regardless of error status
+                        Divider()
                         HStack {
                             Spacer()
                             Diagnostic(valueName: "pH", value: ABGData.pH, unit: "", isNormal: isNormal(value: ABGData.pH, range: ABGData.normalRanges.pH))
@@ -158,53 +197,7 @@ struct ABGInterpretationSheet: View {
                             Diagnostic(valueName: "SaO₂", value: ABGData.saO2, unit: "%", isNormal: isNormal(value: ABGData.saO2, range: ABGData.normalRanges.saO2))
                             Spacer()
                         }
-                        .padding(.bottom, 8)
-                        // Display logic for interpretation results
-                        if everythingIsNormal {
-                            Text("Normal Acid-Base Balance with Normal Oxygenation")
-                        } else if hasGrossError {
-                            // Only show Gross Error message
-                            Text("ABG Gross Error")
-                                .font(.title2)
-                                .bold()
-                                .padding()
-                                .foregroundStyle(.red)
-                        } else {
-                            // Show normal interpretation results
-                            if interpretation.acidBaseStatus.isEmpty {
-                                HStack {
-                                    Image(systemName: "waveform.path.ecg")
-                                        .foregroundStyle(.red)
-                                    Text("Input the pH, PaCO₂, and HCO₃ for ABG Interpretation")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(.red)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.bottom, 5)
-                            } else {
-                                Text(interpretation.acidBaseStatus)
-                                    .font(.title2)
-                                    .padding(.bottom, 2)
-                            }
-                            
-                            // Oxygenation status - only shown if no gross error
-                            if interpretation.oxygenationStatus.isEmpty {
-                                HStack {
-                                    Image(systemName: "waveform.path.ecg")
-                                        .foregroundStyle(.red)
-                                    Text("Input the PaO₂ for Oxygen Status Interpretation")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(.red)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            } else {
-                                Text("with \(interpretation.oxygenationStatus)")
-                                    .font(.title2)
-                            }
-                        }
-                        
-                        // Display diagnostic values regardless of error status
-                        
+//                        .padding(8)
                     }
                 }
                 .customGroupBoxStyle1()
@@ -220,11 +213,6 @@ struct ABGInterpretationSheet: View {
                             if let abgInterpretation = ABGInterpretations[interpretation.conditionLabel] {
                                 if let description = abgInterpretation.description {
                                     VStack {
-//                                        Text("Interpretation & Treatment")
-//                                            .font(.title)
-//                                            .bold()
-//                                            .frame(maxWidth: .infinity, alignment: .leading)
-//                                            .padding(.bottom, 5)
                                         
                                         Divider()
                                             .frame(height: 3)

@@ -1235,14 +1235,14 @@ struct CustomButtonStyle: ButtonStyle {
             .bold()
             .lineLimit(1)
             .padding(.horizontal)
-            .frame(width: 200)
+            .frame(width: 200, height: 18)
             .padding(.vertical, 5)
             .multilineTextAlignment(.center)
             .foregroundStyle(colorScheme == .dark ? Color.white : Color.black)
             .padding(10)
             .background(.regularMaterial)
             .cornerRadius(30)
-            .shadow(color:.black.opacity(0.1),radius: 5, x: 1 , y: 1)
+            .shadow(color:.black.opacity(0.1),radius: 2, x: 2 , y: 2)
 //            .background(
 //                LinearGradient(
 //                    gradient: colorScheme == .dark ? Gradient(colors: [.cyan,.blue]) : Gradient(colors: [.cyan.opacity(0.8), .cyan, .cyan.opacity(0.8)]),
@@ -1256,21 +1256,21 @@ struct CustomButtonStyle: ButtonStyle {
 //            .cornerRadius(15)
             .overlay(
                 RoundedRectangle(cornerRadius: 30)
-                    .stroke((colorScheme == .dark ? Color.cyan : Color.cyan).opacity(0.3), lineWidth: 3)
+                    .stroke((colorScheme == .dark ? Color.cyan : Color.white), lineWidth: 1)
             )
-            .shadow(color:.black.opacity(0.2),radius: 1, x: 1 , y: 1)
+//            .shadow(color:.black.opacity(0.2),radius: 1, x: 1 , y: 1)
             .overlay(
                 RoundedRectangle(cornerRadius: 30)
                     .fill(
                         LinearGradient(
-                            gradient: colorScheme == .dark ? Gradient(colors: [.black.opacity(0.1), .clear,.black.opacity(0.1)]) : Gradient (colors: [.white.opacity(0.5),.clear, .clear, .clear, .white.opacity(0.2)]),
+                            gradient: colorScheme == .dark ? Gradient(colors: [.black.opacity(0.1), .clear,.black.opacity(0.1)]) : Gradient (colors: [.white.opacity(0.2),.clear, .clear, .clear, .white.opacity(0.2)]),
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
                     .padding(2)
             )
-            .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
+            .shadow(color: .black.opacity(0.1), radius: 5, x: 1, y: 1)
             .padding(.top, 10)
     }
 }
@@ -1635,8 +1635,8 @@ The main goal is always to save lives and improve patient outcomes by providing 
 //    }
 //}
 struct MovingGradientView: View {
-    @State private var startPoint = UnitPoint(x: 0.1, y: 0.1)  // Much closer to the edge
-    @State private var endPoint = UnitPoint(x: 0.9, y: 0.9)    // Much closer to the opposite edge
+    @State private var startPoint = UnitPoint(x: 0.1, y: 0.1)
+    @State private var endPoint = UnitPoint(x: 0.9, y: 0.9)
     
     let timer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
     let colors: [Color]
@@ -1652,9 +1652,9 @@ struct MovingGradientView: View {
             )
             .onReceive(timer) { _ in
                 withAnimation(.easeInOut(duration: 4)) {
-                    // Make the animation range wider to keep the center color dominant
-                    startPoint = UnitPoint(x: CGFloat.random(in: 0.05...0.15),
-                                           y: CGFloat.random(in: 0.05...0.15))
+                 
+                    startPoint = UnitPoint(x: CGFloat.random(in: 0.05...0.60),
+                                           y: CGFloat.random(in: 0.05...0.60))
                     endPoint = UnitPoint(x: CGFloat.random(in: 0.85...0.95),
                                          y: CGFloat.random(in: 0.85...0.95))
                 }

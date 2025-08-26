@@ -162,7 +162,7 @@ struct CalculatorView<Output: View>: View {
     let outputView: Output
     let info: String
     let infoPage: AnyView
-
+    @State private var hapticTrigger = false
     @State private var gradientColors: [Color] = [
         Color(.cyan).opacity(0.1),
         Color(.cyan).opacity(0.2),
@@ -181,7 +181,7 @@ struct CalculatorView<Output: View>: View {
                         CalculatorInstructions(instructions: instructions)
                             .lineLimit(4)
                             .minimumScaleFactor(0.1)
-                      
+            
                         HStack {
                             VStack {
                                 ForEach(inputs.prefix(inputs.count / 2), id: \.label) {
@@ -195,9 +195,15 @@ struct CalculatorView<Output: View>: View {
                             }
                         }
 
-                      
-                        Button("Calculate", action: calculateAction)
+                     
+                        Button("Calculate") {
+                            calculateAction()
+//                            hapticTrigger.toggle()
+                        }
                             .buttonStyle(CustomButtonStyle())
+                           
+                            .sensoryFeedback(.success, trigger:hapticTrigger)
+                        
 
                     
                         outputView

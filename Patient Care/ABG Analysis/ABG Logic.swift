@@ -6,10 +6,12 @@
 //
 
 import Foundation
+
 func reccomendVentSettings(VT: Double?, PC: Double?, PS: Double?, RR: Double?, FiO2: Double?, PEEP: Double?, IT: Double?, flow: Double?, VTe: Double?, fTOT: Double?, PIP: Double?, MAP: Double?, pPlat: Double?, autoPEEP: Double?, ptLeak: Double? )  {
     
-
 }
+
+
 struct ABGResult {
     let acidBaseStatus: String
     let compensationStatus: String

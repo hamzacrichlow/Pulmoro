@@ -57,9 +57,9 @@ struct AnionGapCalculator: View {
             info: """
 The anion gap is a calculation used to assess the difference between positively and negatively charged electrolytes in the blood.
 
-The normal anion gap range can vary slightly but it's generally considered to be around 8-12 mEq/L
+The normal anion gap range can vary slightly but it's generally considered to be around 8-12 mEq/L.
 
-Elevated anion gap maay indicate metabolic acidosis.
+An elevated anion gap may indicate metabolic acidosis.
 
 Decreased anion gap may indicate certain conditions, such as hyperchloremia. 
 """,
