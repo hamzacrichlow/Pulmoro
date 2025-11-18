@@ -2,7 +2,7 @@
 **The clinical decision support tool for managing respiratory patients.**  
 
 Available on the App Store: **[Pulmoro](https://apps.apple.com/us/app/pulmoro/id6753176045)**
-<img width="1242" height="2688" alt="Image" src="https://github.com/user-attachments/assets/6a50420e-df3c-4320-86fe-fcb4b7d0dad2" />
+<img width="1063" height="352" alt="Image" src="https://github.com/user-attachments/assets/cb5fede3-e8ef-4ca0-8130-eb9ffcc5589d" />
 Pulmoro simplifies arterial blood gas interpretation, ventilator management, and respiratory calculations through clear, intuitive tools built for intensive care environments. Created by a practicing Respiratory Therapist, the app supports fast, accurate decision making at the bedside.
 
 ## About Pulmoro
