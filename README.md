@@ -68,15 +68,14 @@ Pulmoro’s roadmap focuses on expanding its depth and usability. Upcoming updat
 Pulmoro does not collect or store any personal or clinical data.  
 All calculations run locally on the device.
 
-→ **See full policy here: [PRIVACY.md](PRIVACY.md)**
+**See full policy here: [PRIVACY.md](https://github.com/hamzacrichlow/Pulmoro-Privacy-Policy)**
 
---
 
 ## Author
 
 **Hamza Crichlow**  
 Detroit, MI  
-📧 crichlowh@icloud.com  
-🔗 https://linkedin.com/in/hamzacrichlow
+crichlowh@icloud.com  
+https://linkedin.com/in/hamzacrichlow
 
---
+<img width="700" height="250" alt="Image" src="https://github.com/user-attachments/assets/e2f9d752-3613-4133-8ab0-3426f967a386" />
